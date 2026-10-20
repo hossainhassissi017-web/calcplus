@@ -5,7 +5,7 @@
 <title>CalcPlus</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#f4f5f7">
-<meta name="description" content="CalcPlus: calculator, VAT, discount, split bill, currency, units, loan, dates, BMI and number bases.">
+<meta name="description" content="CalcPlus: calculator, currency, VAT, percentages, margin, trip cost, savings, gold, Hijri date, zakat and more in 10 languages.">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -38,7 +38,7 @@ header div{display:flex;gap:6px}
 main{flex:1;overflow-y:auto;padding:6px 14px 14px;-webkit-overflow-scrolling:touch}
 nav{display:flex;overflow-x:auto;gap:4px;padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:var(--card);border-top:1px solid var(--line);scrollbar-width:none}
 nav::-webkit-scrollbar{display:none}
-nav button{flex:0 0 auto;min-width:68px;border:0;background:transparent;color:var(--mut);padding:6px 4px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;cursor:pointer}
+nav button{flex:1 1 0;min-width:0;border:0;background:transparent;color:var(--mut);padding:6px 4px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;cursor:pointer}
 nav button i{font-style:normal;font-size:20px;line-height:1}
 nav button.on{background:color-mix(in srgb,var(--acc) 18%,transparent);color:var(--txt);font-weight:600}
 
@@ -88,6 +88,14 @@ input:focus,select:focus{outline:2px solid var(--acc);outline-offset:0}
 .btn{width:100%;border:0;background:var(--acc);color:var(--acct);padding:13px;border-radius:14px;font-size:16px;font-weight:600;cursor:pointer;margin-top:4px}
 .btn.dng{background:var(--bad);margin-top:12px}
 
+[hidden]{display:none!important}
+.ttl{display:flex;align-items:center;gap:8px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:18px 8px;min-height:96px;border:0;border-radius:16px;background:var(--card);color:var(--txt);box-shadow:var(--shadow);font:inherit;font-size:15px;font-weight:600;text-align:center;cursor:pointer}
+.card i{font-style:normal;font-size:30px;line-height:1}
+.card:active{transform:scale(.97)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sub{font-weight:700;margin:6px 2px}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;z-index:20}
 #modal[hidden]{display:none}
@@ -109,7 +117,7 @@ input:focus,select:focus{outline:2px solid var(--acc);outline-offset:0}
 <body>
 <div id="app">
   <header>
-    <h1 id="title">CalcPlus</h1>
+    <div class="ttl"><button class="ib" id="backBtn" hidden>←</button><h1 id="title">CalcPlus</h1></div>
     <div>
       <button class="ib" id="histBtn">🕘</button>
       <button class="ib" id="settBtn">⚙️</button>

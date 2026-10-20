@@ -1,7 +1,8 @@
 'use strict';
 /* =====================================================================
    CalcPlus - calculator + tools (VAT, discount, split bill, currency,
-   units, loan, dates, BMI, number bases). 10 languages. No dependencies.
+   units, loan, dates, BMI, bases, percentages, margin, price compare,
+   trip cost, savings, work hours, gold, Hijri, zakat). 10 languages. No dependencies.
    ===================================================================== */
 
 /* ============================ ENGINE ============================ */
@@ -158,6 +159,21 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
     zh: { calc: '计算器', tva: '增值税', disc: '折扣', split: '分摊账单', cur: '汇率', unit: '单位', loan: '贷款', date: '日期', bmi: 'BMI', prog: '进制', hist: '历史', sett: '设置', lang: '语言', theme: '主题', auto: '自动', light: '浅色', dark: '深色', vib: '振动', copy: '复制', copied: '已复制 ✓', noHist: '暂无历史', clearHist: '清除历史', amount: '金额', rate: '税率 (%)', toTTC: '不含税 → 含税', toHT: '含税 → 不含税', ht: '不含税', vat: '税额', ttc: '含税', price: '价格', discPct: '折扣 (%)', finalPrice: '最终价格', saved: '节省', bill: '账单金额', tipPct: '小费 (%)', people: '人数', perPerson: '每人', tip: '小费', total: '总计', from: '从', to: '到', update: '更新汇率', updated: '更新于', approx: '大致汇率（离线）', category: '类别', value: '数值', length: '长度', weight: '重量', temp: '温度', area: '面积', volume: '体积', speed: '速度', principal: '贷款金额', annualRate: '年利率 (%)', years: '年数', monthly: '月供', totalPay: '还款总额', interest: '利息总额', d1: '开始 / 出生日期', d2: '结束日期', diff: '相差', yrs: '年', mos: '个月', dys: '天', totalDays: '总天数', kg: '体重 (kg)', cm: '身高 (cm)', under: '偏瘦', normal: '正常', over: '超重', obese: '肥胖', number: '数字', invalid: '无效', privacy: '隐私政策', loading: '加载中…', failed: '更新失败', today: '今天', base: '进制' },
     hi: { calc: 'कैलकुलेटर', tva: 'जीएसटी/वैट', disc: 'छूट', split: 'बिल बाँटें', cur: 'मुद्रा', unit: 'इकाइयाँ', loan: 'ऋण', date: 'तारीखें', bmi: 'बीएमआई', prog: 'संख्या पद्धति', hist: 'इतिहास', sett: 'सेटिंग्स', lang: 'भाषा', theme: 'थीम', auto: 'ऑटो', light: 'लाइट', dark: 'डार्क', vib: 'कंपन', copy: 'कॉपी', copied: 'कॉपी हो गया ✓', noHist: 'कोई इतिहास नहीं', clearHist: 'इतिहास मिटाएँ', amount: 'राशि', rate: 'दर (%)', toTTC: 'कर रहित → कर सहित', toHT: 'कर सहित → कर रहित', ht: 'कर रहित', vat: 'कर', ttc: 'कर सहित', price: 'कीमत', discPct: 'छूट (%)', finalPrice: 'अंतिम कीमत', saved: 'बचत', bill: 'बिल राशि', tipPct: 'टिप (%)', people: 'लोग', perPerson: 'प्रति व्यक्ति', tip: 'टिप', total: 'कुल', from: 'से', to: 'में', update: 'दरें अपडेट करें', updated: 'अपडेट किया', approx: 'अनुमानित दरें (ऑफ़लाइन)', category: 'श्रेणी', value: 'मान', length: 'लंबाई', weight: 'वज़न', temp: 'तापमान', area: 'क्षेत्रफल', volume: 'आयतन', speed: 'गति', principal: 'ऋण राशि', annualRate: 'वार्षिक ब्याज (%)', years: 'वर्ष', monthly: 'मासिक किस्त', totalPay: 'कुल भुगतान', interest: 'कुल ब्याज', d1: 'प्रारंभ / जन्म तिथि', d2: 'अंतिम तिथि', diff: 'अंतर', yrs: 'वर्ष', mos: 'महीने', dys: 'दिन', totalDays: 'कुल दिन', kg: 'वज़न (किग्रा)', cm: 'कद (सेमी)', under: 'कम वज़न', normal: 'सामान्य', over: 'अधिक वज़न', obese: 'मोटापा', number: 'संख्या', invalid: 'अमान्य', privacy: 'गोपनीयता नीति', loading: 'लोड हो रहा है…', failed: 'अपडेट विफल', today: 'आज', base: 'पद्धति' }
   };
+
+  /* ---- extra translations (new tools) ---- */
+  const X = {
+    en: { tools: 'Tools', search: 'Search', back: 'Back', pct: 'Percentages', marg: 'Profit margin', cmp: 'Compare prices', trip: 'Trip cost', comp: 'Savings growth', hrs: 'Work hours', gold: 'Gold', hij: 'Hijri date', zakat: 'Zakat', country: 'Country', custom: 'Custom', vatNote: 'Standard national rates; they can change and regional taxes may apply. Check with your tax authority.', pctOf: 'X% of Y', whatPct: 'A is what % of B', pchange: '% change', addSub: 'Add / subtract %', percent: 'Percent (%)', ofValue: 'Of value', ofTotal: 'Of total', result: 'Result', plusPct: 'Increased', minusPct: 'Decreased', cost: 'Cost price', sellPrice: 'Selling price', profit: 'Profit', margin: 'Margin (of selling price)', markup: 'Markup (on cost)', targetMargin: 'Target margin (%)', modePrices: 'From prices', modeTarget: 'Target margin', prodA: 'Product A', prodB: 'Product B', qty: 'Quantity', cheaper: 'Better deal', perUnit: 'Price per unit', savingPct: 'Saving', same: 'Same price', distance: 'Distance', consumption: 'Consumption', fuelPrice: 'Fuel price', fuelNeeded: 'Fuel needed', tripCost: 'Trip cost', metricSys: 'Metric (km, L)', impSys: 'US (mi, gal)', initial: 'Starting amount', monthlyAdd: 'Monthly deposit', finalBal: 'Final balance', contributed: 'Total deposited', earned: 'Interest earned', startT: 'Start time', endT: 'End time', breakMin: 'Break (minutes)', hourlyRate: 'Hourly rate', hoursWorked: 'Hours worked', decimalH: 'Decimal hours', pay: 'Pay', karat: 'Karat', goldPrice: 'Gold price (24K)', perGram: 'per gram', perOz: 'per troy ounce', pureGold: 'Pure gold (g)', goldValue: 'Value', g2h: 'Gregorian → Hijri', h2g: 'Hijri → Gregorian', hijDate: 'Hijri date', gregDate: 'Gregorian date', day: 'Day', month: 'Month', year: 'Year', hijNote: 'Umm al-Qura calendar. Local moon sighting can differ by a day.', zWealth: 'Cash, savings, gold & trade goods', zDebts: 'Debts due now', zGoldG: 'Gold price per gram (24K)', zNisab: 'Nisab (85 g of gold)', zDue: 'Zakat due (2.5%)', zBelow: 'Below nisab: no zakat due', zNote: 'Estimate only. Rules differ between schools; ask a scholar.', ratesBy: 'Rates by Exchange Rate API' },
+    fr: { tools: 'Outils', search: 'Rechercher', back: 'Retour', pct: 'Pourcentages', marg: 'Marge bénéficiaire', cmp: 'Comparer les prix', trip: 'Coût du trajet', comp: 'Épargne', hrs: 'Heures de travail', gold: 'Or', hij: 'Date hégirienne', zakat: 'Zakât', country: 'Pays', custom: 'Personnalisé', vatNote: 'Taux normaux nationaux ; ils peuvent changer et des taxes régionales peuvent s’appliquer. Vérifiez auprès de l’administration fiscale.', pctOf: 'X % de Y', whatPct: 'A représente quel % de B', pchange: 'Variation en %', addSub: 'Ajouter / retirer un %', percent: 'Pourcentage (%)', ofValue: 'De la valeur', ofTotal: 'Du total', result: 'Résultat', plusPct: 'Augmenté', minusPct: 'Diminué', cost: 'Prix d’achat', sellPrice: 'Prix de vente', profit: 'Bénéfice', margin: 'Taux de marque (sur le prix de vente)', markup: 'Taux de marge (sur le coût)', targetMargin: 'Taux de marque visé (%)', modePrices: 'À partir des prix', modeTarget: 'Marque visée', prodA: 'Produit A', prodB: 'Produit B', qty: 'Quantité', cheaper: 'Meilleure affaire', perUnit: 'Prix unitaire', savingPct: 'Économie', same: 'Même prix', distance: 'Distance', consumption: 'Consommation', fuelPrice: 'Prix du carburant', fuelNeeded: 'Carburant nécessaire', tripCost: 'Coût du trajet', metricSys: 'Métrique (km, L)', impSys: 'US (mi, gal)', initial: 'Montant initial', monthlyAdd: 'Versement mensuel', finalBal: 'Solde final', contributed: 'Total versé', earned: 'Intérêts gagnés', startT: 'Heure de début', endT: 'Heure de fin', breakMin: 'Pause (minutes)', hourlyRate: 'Taux horaire', hoursWorked: 'Heures travaillées', decimalH: 'Heures décimales', pay: 'Rémunération', karat: 'Carats', goldPrice: 'Prix de l’or (24 carats)', perGram: 'par gramme', perOz: 'par once troy', pureGold: 'Or pur (g)', goldValue: 'Valeur', g2h: 'Grégorien → Hégirien', h2g: 'Hégirien → Grégorien', hijDate: 'Date hégirienne', gregDate: 'Date grégorienne', day: 'Jour', month: 'Mois', year: 'Année', hijNote: 'Calendrier Oumm al-Qura. L’observation locale de la lune peut différer d’un jour.', zWealth: 'Liquidités, épargne, or et marchandises', zDebts: 'Dettes exigibles', zGoldG: 'Prix de l’or au gramme (24 k)', zNisab: 'Nisab (85 g d’or)', zDue: 'Zakât due (2,5 %)', zBelow: 'Sous le nisab : aucune zakât due', zNote: 'Estimation seulement. Les règles varient selon les écoles ; demandez à un savant.', ratesBy: 'Taux fournis par Exchange Rate API' },
+    ar: { tools: 'الأدوات', search: 'بحث', back: 'رجوع', pct: 'النسب المئوية', marg: 'هامش الربح', cmp: 'مقارنة الأسعار', trip: 'تكلفة الرحلة', comp: 'نمو المدخرات', hrs: 'ساعات العمل', gold: 'الذهب', hij: 'التاريخ الهجري', zakat: 'الزكاة', country: 'البلد', custom: 'مخصص', vatNote: 'نسب وطنية قياسية، وقد تتغير وقد تُضاف ضرائب محلية. تحقق من الجهة الضريبية.', pctOf: 'X% من Y', whatPct: 'A تمثل كم % من B', pchange: 'نسبة التغير', addSub: 'زيادة / نقصان بنسبة', percent: 'النسبة (%)', ofValue: 'من القيمة', ofTotal: 'من المجموع', result: 'النتيجة', plusPct: 'بعد الزيادة', minusPct: 'بعد النقصان', cost: 'سعر التكلفة', sellPrice: 'سعر البيع', profit: 'الربح', margin: 'هامش الربح (من سعر البيع)', markup: 'نسبة الزيادة (على التكلفة)', targetMargin: 'الهامش المطلوب (%)', modePrices: 'من الأسعار', modeTarget: 'هامش مستهدف', prodA: 'المنتج A', prodB: 'المنتج B', qty: 'الكمية', cheaper: 'الأفضل سعراً', perUnit: 'السعر للوحدة', savingPct: 'التوفير', same: 'نفس السعر', distance: 'المسافة', consumption: 'الاستهلاك', fuelPrice: 'سعر الوقود', fuelNeeded: 'الوقود اللازم', tripCost: 'تكلفة الرحلة', metricSys: 'متري (كم، لتر)', impSys: 'أمريكي (ميل، غالون)', initial: 'المبلغ الابتدائي', monthlyAdd: 'الإيداع الشهري', finalBal: 'الرصيد النهائي', contributed: 'مجموع الإيداعات', earned: 'الفوائد المكتسبة', startT: 'وقت البداية', endT: 'وقت النهاية', breakMin: 'الاستراحة (دقائق)', hourlyRate: 'الأجر بالساعة', hoursWorked: 'ساعات العمل', decimalH: 'الساعات بالعشري', pay: 'الأجر', karat: 'العيار', goldPrice: 'سعر الذهب (عيار 24)', perGram: 'للغرام', perOz: 'للأونصة', pureGold: 'الذهب الخالص (غ)', goldValue: 'القيمة', g2h: 'ميلادي ← هجري', h2g: 'هجري ← ميلادي', hijDate: 'التاريخ الهجري', gregDate: 'التاريخ الميلادي', day: 'اليوم', month: 'الشهر', year: 'السنة', hijNote: 'تقويم أم القرى. رؤية الهلال المحلية قد تختلف بيوم.', zWealth: 'النقد والمدخرات والذهب وعروض التجارة', zDebts: 'الديون الحالّة', zGoldG: 'سعر غرام الذهب (عيار 24)', zNisab: 'النصاب (85 غرام ذهب)', zDue: 'الزكاة المستحقة (2.5%)', zBelow: 'أقل من النصاب: لا زكاة', zNote: 'تقدير فقط. تختلف الأحكام بين المذاهب، فاسأل أهل العلم.', ratesBy: 'الأسعار من Exchange Rate API' },
+    es: { tools: 'Herramientas', search: 'Buscar', back: 'Atrás', pct: 'Porcentajes', marg: 'Margen de beneficio', cmp: 'Comparar precios', trip: 'Coste del viaje', comp: 'Ahorro', hrs: 'Horas de trabajo', gold: 'Oro', hij: 'Fecha hegiriana', zakat: 'Zakat', country: 'País', custom: 'Personalizado', vatNote: 'Tipos generales nacionales; pueden cambiar y pueden aplicarse impuestos regionales. Consulta a tu autoridad fiscal.', pctOf: 'X % de Y', whatPct: 'A es qué % de B', pchange: 'Variación %', addSub: 'Sumar / restar %', percent: 'Porcentaje (%)', ofValue: 'Del valor', ofTotal: 'Del total', result: 'Resultado', plusPct: 'Aumentado', minusPct: 'Reducido', cost: 'Precio de coste', sellPrice: 'Precio de venta', profit: 'Beneficio', margin: 'Margen (sobre el precio de venta)', markup: 'Recargo (sobre el coste)', targetMargin: 'Margen objetivo (%)', modePrices: 'Desde precios', modeTarget: 'Margen objetivo', prodA: 'Producto A', prodB: 'Producto B', qty: 'Cantidad', cheaper: 'Mejor oferta', perUnit: 'Precio por unidad', savingPct: 'Ahorro', same: 'Mismo precio', distance: 'Distancia', consumption: 'Consumo', fuelPrice: 'Precio del combustible', fuelNeeded: 'Combustible necesario', tripCost: 'Coste del viaje', metricSys: 'Métrico (km, L)', impSys: 'EE. UU. (mi, gal)', initial: 'Importe inicial', monthlyAdd: 'Aportación mensual', finalBal: 'Saldo final', contributed: 'Total aportado', earned: 'Intereses ganados', startT: 'Hora de inicio', endT: 'Hora de fin', breakMin: 'Descanso (minutos)', hourlyRate: 'Tarifa por hora', hoursWorked: 'Horas trabajadas', decimalH: 'Horas decimales', pay: 'Pago', karat: 'Quilates', goldPrice: 'Precio del oro (24 K)', perGram: 'por gramo', perOz: 'por onza troy', pureGold: 'Oro puro (g)', goldValue: 'Valor', g2h: 'Gregoriano → Hegiriano', h2g: 'Hegiriano → Gregoriano', hijDate: 'Fecha hegiriana', gregDate: 'Fecha gregoriana', day: 'Día', month: 'Mes', year: 'Año', hijNote: 'Calendario Umm al-Qura. La observación local de la luna puede diferir un día.', zWealth: 'Efectivo, ahorros, oro y mercancías', zDebts: 'Deudas exigibles', zGoldG: 'Precio del oro por gramo (24 K)', zNisab: 'Nisab (85 g de oro)', zDue: 'Zakat debido (2,5 %)', zBelow: 'Por debajo del nisab: no hay zakat', zNote: 'Solo una estimación. Las normas varían entre escuelas; consulta a un erudito.', ratesBy: 'Tipos de Exchange Rate API' },
+    pt: { tools: 'Ferramentas', search: 'Pesquisar', back: 'Voltar', pct: 'Percentagens', marg: 'Margem de lucro', cmp: 'Comparar preços', trip: 'Custo da viagem', comp: 'Poupança', hrs: 'Horas de trabalho', gold: 'Ouro', hij: 'Data hegírica', zakat: 'Zakat', country: 'País', custom: 'Personalizado', vatNote: 'Taxas normais nacionais; podem mudar e podem aplicar-se impostos regionais. Confirme com a autoridade fiscal.', pctOf: 'X% de Y', whatPct: 'A é quantos % de B', pchange: 'Variação %', addSub: 'Somar / subtrair %', percent: 'Percentagem (%)', ofValue: 'Do valor', ofTotal: 'Do total', result: 'Resultado', plusPct: 'Aumentado', minusPct: 'Reduzido', cost: 'Preço de custo', sellPrice: 'Preço de venda', profit: 'Lucro', margin: 'Margem (sobre o preço de venda)', markup: 'Markup (sobre o custo)', targetMargin: 'Margem pretendida (%)', modePrices: 'A partir dos preços', modeTarget: 'Margem pretendida', prodA: 'Produto A', prodB: 'Produto B', qty: 'Quantidade', cheaper: 'Melhor oferta', perUnit: 'Preço por unidade', savingPct: 'Poupança', same: 'Mesmo preço', distance: 'Distância', consumption: 'Consumo', fuelPrice: 'Preço do combustível', fuelNeeded: 'Combustível necessário', tripCost: 'Custo da viagem', metricSys: 'Métrico (km, L)', impSys: 'EUA (mi, gal)', initial: 'Valor inicial', monthlyAdd: 'Depósito mensal', finalBal: 'Saldo final', contributed: 'Total depositado', earned: 'Juros ganhos', startT: 'Hora de início', endT: 'Hora de fim', breakMin: 'Pausa (minutos)', hourlyRate: 'Valor por hora', hoursWorked: 'Horas trabalhadas', decimalH: 'Horas decimais', pay: 'Pagamento', karat: 'Quilates', goldPrice: 'Preço do ouro (24K)', perGram: 'por grama', perOz: 'por onça troy', pureGold: 'Ouro puro (g)', goldValue: 'Valor', g2h: 'Gregoriano → Hegírico', h2g: 'Hegírico → Gregoriano', hijDate: 'Data hegírica', gregDate: 'Data gregoriana', day: 'Dia', month: 'Mês', year: 'Ano', hijNote: 'Calendário Umm al-Qura. A observação local da lua pode diferir um dia.', zWealth: 'Dinheiro, poupanças, ouro e mercadorias', zDebts: 'Dívidas vencidas', zGoldG: 'Preço do ouro por grama (24K)', zNisab: 'Nisab (85 g de ouro)', zDue: 'Zakat devido (2,5%)', zBelow: 'Abaixo do nisab: sem zakat', zNote: 'Apenas uma estimativa. As regras variam entre escolas; consulte um estudioso.', ratesBy: 'Taxas da Exchange Rate API' },
+    de: { tools: 'Werkzeuge', search: 'Suchen', back: 'Zurück', pct: 'Prozente', marg: 'Gewinnspanne', cmp: 'Preise vergleichen', trip: 'Fahrtkosten', comp: 'Sparen', hrs: 'Arbeitsstunden', gold: 'Gold', hij: 'Hidschri-Datum', zakat: 'Zakat', country: 'Land', custom: 'Eigener Satz', vatNote: 'Nationale Normalsätze; sie können sich ändern, regionale Steuern können hinzukommen. Bitte bei der Steuerbehörde prüfen.', pctOf: 'X % von Y', whatPct: 'A sind wie viel % von B', pchange: 'Änderung in %', addSub: '% addieren / abziehen', percent: 'Prozent (%)', ofValue: 'Von Wert', ofTotal: 'Von Gesamt', result: 'Ergebnis', plusPct: 'Erhöht', minusPct: 'Verringert', cost: 'Einkaufspreis', sellPrice: 'Verkaufspreis', profit: 'Gewinn', margin: 'Marge (vom Verkaufspreis)', markup: 'Aufschlag (auf die Kosten)', targetMargin: 'Zielmarge (%)', modePrices: 'Aus Preisen', modeTarget: 'Zielmarge', prodA: 'Produkt A', prodB: 'Produkt B', qty: 'Menge', cheaper: 'Besseres Angebot', perUnit: 'Preis pro Einheit', savingPct: 'Ersparnis', same: 'Gleicher Preis', distance: 'Strecke', consumption: 'Verbrauch', fuelPrice: 'Kraftstoffpreis', fuelNeeded: 'Benötigter Kraftstoff', tripCost: 'Fahrtkosten', metricSys: 'Metrisch (km, L)', impSys: 'US (mi, gal)', initial: 'Startbetrag', monthlyAdd: 'Monatliche Einzahlung', finalBal: 'Endkapital', contributed: 'Eingezahlt gesamt', earned: 'Erzielte Zinsen', startT: 'Beginn', endT: 'Ende', breakMin: 'Pause (Minuten)', hourlyRate: 'Stundenlohn', hoursWorked: 'Gearbeitete Stunden', decimalH: 'Dezimalstunden', pay: 'Lohn', karat: 'Karat', goldPrice: 'Goldpreis (24 K)', perGram: 'pro Gramm', perOz: 'pro Feinunze', pureGold: 'Feingold (g)', goldValue: 'Wert', g2h: 'Gregorianisch → Hidschri', h2g: 'Hidschri → Gregorianisch', hijDate: 'Hidschri-Datum', gregDate: 'Gregorianisches Datum', day: 'Tag', month: 'Monat', year: 'Jahr', hijNote: 'Umm-al-Qura-Kalender. Die lokale Mondsichtung kann um einen Tag abweichen.', zWealth: 'Bargeld, Ersparnisse, Gold und Handelsware', zDebts: 'Fällige Schulden', zGoldG: 'Goldpreis pro Gramm (24 K)', zNisab: 'Nisab (85 g Gold)', zDue: 'Fällige Zakat (2,5 %)', zBelow: 'Unter dem Nisab: keine Zakat fällig', zNote: 'Nur eine Schätzung. Die Regeln unterscheiden sich je nach Rechtsschule; fragen Sie einen Gelehrten.', ratesBy: 'Kurse von Exchange Rate API' },
+    ru: { tools: 'Инструменты', search: 'Поиск', back: 'Назад', pct: 'Проценты', marg: 'Маржа', cmp: 'Сравнение цен', trip: 'Стоимость поездки', comp: 'Накопления', hrs: 'Рабочие часы', gold: 'Золото', hij: 'Дата хиджры', zakat: 'Закят', country: 'Страна', custom: 'Своя ставка', vatNote: 'Стандартные национальные ставки; они могут меняться, возможны региональные налоги. Уточняйте в налоговом органе.', pctOf: 'X% от Y', whatPct: 'Сколько % составляет A от B', pchange: 'Изменение в %', addSub: 'Прибавить / вычесть %', percent: 'Процент (%)', ofValue: 'От значения', ofTotal: 'От общего', result: 'Результат', plusPct: 'После увеличения', minusPct: 'После уменьшения', cost: 'Себестоимость', sellPrice: 'Цена продажи', profit: 'Прибыль', margin: 'Маржа (от цены продажи)', markup: 'Наценка (на себестоимость)', targetMargin: 'Целевая маржа (%)', modePrices: 'По ценам', modeTarget: 'Целевая маржа', prodA: 'Товар A', prodB: 'Товар B', qty: 'Количество', cheaper: 'Выгоднее', perUnit: 'Цена за единицу', savingPct: 'Экономия', same: 'Цена одинакова', distance: 'Расстояние', consumption: 'Расход', fuelPrice: 'Цена топлива', fuelNeeded: 'Нужно топлива', tripCost: 'Стоимость поездки', metricSys: 'Метрическая (км, л)', impSys: 'США (мили, гал.)', initial: 'Начальная сумма', monthlyAdd: 'Ежемесячный взнос', finalBal: 'Итоговый баланс', contributed: 'Всего внесено', earned: 'Начисленные проценты', startT: 'Начало', endT: 'Конец', breakMin: 'Перерыв (минуты)', hourlyRate: 'Ставка в час', hoursWorked: 'Отработано часов', decimalH: 'Часы десятичные', pay: 'Оплата', karat: 'Карат', goldPrice: 'Цена золота (24K)', perGram: 'за грамм', perOz: 'за тройскую унцию', pureGold: 'Чистое золото (г)', goldValue: 'Стоимость', g2h: 'Григорианский → Хиджра', h2g: 'Хиджра → Григорианский', hijDate: 'Дата по хиджре', gregDate: 'Григорианская дата', day: 'День', month: 'Месяц', year: 'Год', hijNote: 'Календарь Умм аль-Кура. Местное наблюдение луны может отличаться на один день.', zWealth: 'Наличные, сбережения, золото и товары', zDebts: 'Текущие долги', zGoldG: 'Цена золота за грамм (24K)', zNisab: 'Нисаб (85 г золота)', zDue: 'Закят к уплате (2,5%)', zBelow: 'Ниже нисаба: закят не нужен', zNote: 'Только оценка. Правила различаются между мазхабами; спросите знающего человека.', ratesBy: 'Курсы от Exchange Rate API' },
+    tr: { tools: 'Araçlar', search: 'Ara', back: 'Geri', pct: 'Yüzdeler', marg: 'Kâr marjı', cmp: 'Fiyat karşılaştır', trip: 'Yolculuk maliyeti', comp: 'Birikim', hrs: 'Çalışma saatleri', gold: 'Altın', hij: 'Hicri tarih', zakat: 'Zekât', country: 'Ülke', custom: 'Özel', vatNote: 'Ulusal genel oranlar; değişebilir ve bölgesel vergiler uygulanabilir. Vergi dairesinden doğrulayın.', pctOf: 'Y’nin %X’i', whatPct: 'A, B’nin yüzde kaçı', pchange: 'Yüzde değişim', addSub: '% ekle / çıkar', percent: 'Yüzde (%)', ofValue: 'Değerin', ofTotal: 'Toplamın', result: 'Sonuç', plusPct: 'Artırılmış', minusPct: 'Azaltılmış', cost: 'Maliyet fiyatı', sellPrice: 'Satış fiyatı', profit: 'Kâr', margin: 'Marj (satış fiyatına göre)', markup: 'Kâr oranı (maliyete göre)', targetMargin: 'Hedef marj (%)', modePrices: 'Fiyatlardan', modeTarget: 'Hedef marj', prodA: 'Ürün A', prodB: 'Ürün B', qty: 'Miktar', cheaper: 'Daha avantajlı', perUnit: 'Birim fiyat', savingPct: 'Tasarruf', same: 'Aynı fiyat', distance: 'Mesafe', consumption: 'Tüketim', fuelPrice: 'Yakıt fiyatı', fuelNeeded: 'Gereken yakıt', tripCost: 'Yolculuk maliyeti', metricSys: 'Metrik (km, L)', impSys: 'ABD (mil, galon)', initial: 'Başlangıç tutarı', monthlyAdd: 'Aylık yatırılan', finalBal: 'Son bakiye', contributed: 'Toplam yatırılan', earned: 'Kazanılan faiz', startT: 'Başlangıç saati', endT: 'Bitiş saati', breakMin: 'Mola (dakika)', hourlyRate: 'Saatlik ücret', hoursWorked: 'Çalışılan saat', decimalH: 'Ondalık saat', pay: 'Ücret', karat: 'Ayar', goldPrice: 'Altın fiyatı (24 ayar)', perGram: 'gram başına', perOz: 'troy ons başına', pureGold: 'Saf altın (g)', goldValue: 'Değer', g2h: 'Miladi → Hicri', h2g: 'Hicri → Miladi', hijDate: 'Hicri tarih', gregDate: 'Miladi tarih', day: 'Gün', month: 'Ay', year: 'Yıl', hijNote: 'Ümmü’l-Kurâ takvimi. Yerel hilal gözlemi bir gün farklı olabilir.', zWealth: 'Nakit, birikim, altın ve ticaret malı', zDebts: 'Vadesi gelmiş borçlar', zGoldG: 'Gram altın fiyatı (24 ayar)', zNisab: 'Nisap (85 g altın)', zDue: 'Ödenecek zekât (%2,5)', zBelow: 'Nisabın altında: zekât gerekmez', zNote: 'Yalnızca tahmindir. Hükümler mezhebe göre değişir; bir âlime danışın.', ratesBy: 'Kurlar: Exchange Rate API' },
+    zh: { tools: '工具', search: '搜索', back: '返回', pct: '百分比', marg: '利润率', cmp: '比价', trip: '行程费用', comp: '储蓄增长', hrs: '工作时长', gold: '黄金', hij: '伊斯兰历', zakat: '天课', country: '国家/地区', custom: '自定义', vatNote: '为各国标准税率，可能调整，部分地区另有地方税，请以税务部门为准。', pctOf: 'Y 的 X%', whatPct: 'A 占 B 的百分之几', pchange: '变化百分比', addSub: '加/减百分比', percent: '百分比 (%)', ofValue: '数值', ofTotal: '总数', result: '结果', plusPct: '增加后', minusPct: '减少后', cost: '成本价', sellPrice: '售价', profit: '利润', margin: '毛利率（占售价）', markup: '加成率（占成本）', targetMargin: '目标毛利率 (%)', modePrices: '按价格', modeTarget: '按目标毛利率', prodA: '商品 A', prodB: '商品 B', qty: '数量', cheaper: '更划算', perUnit: '单价', savingPct: '节省', same: '价格相同', distance: '距离', consumption: '油耗', fuelPrice: '油价', fuelNeeded: '所需燃油', tripCost: '行程费用', metricSys: '公制（公里、升）', impSys: '美制（英里、加仑）', initial: '初始金额', monthlyAdd: '每月存入', finalBal: '最终余额', contributed: '累计存入', earned: '利息收益', startT: '开始时间', endT: '结束时间', breakMin: '休息（分钟）', hourlyRate: '时薪', hoursWorked: '工作时长', decimalH: '小数小时', pay: '工资', karat: '成色（K）', goldPrice: '金价（24K）', perGram: '每克', perOz: '每金衡盎司', pureGold: '纯金（克）', goldValue: '价值', g2h: '公历 → 伊斯兰历', h2g: '伊斯兰历 → 公历', hijDate: '伊斯兰历日期', gregDate: '公历日期', day: '日', month: '月', year: '年', hijNote: '乌姆库拉历。各地观月结果可能相差一天。', zWealth: '现金、存款、黄金和商品', zDebts: '到期债务', zGoldG: '每克金价（24K）', zNisab: '天课起征点（85 克黄金）', zDue: '应缴天课 (2.5%)', zBelow: '低于起征点：无需缴纳', zNote: '仅为估算。各学派规定不同，请咨询学者。', ratesBy: '汇率来自 Exchange Rate API' },
+    hi: { tools: 'टूल्स', search: 'खोजें', back: 'वापस', pct: 'प्रतिशत', marg: 'लाभ मार्जिन', cmp: 'कीमत की तुलना', trip: 'यात्रा खर्च', comp: 'बचत वृद्धि', hrs: 'काम के घंटे', gold: 'सोना', hij: 'हिजरी तारीख', zakat: 'ज़कात', country: 'देश', custom: 'अपनी दर', vatNote: 'राष्ट्रीय मानक दरें; ये बदल सकती हैं और क्षेत्रीय कर लग सकते हैं। कर विभाग से जाँच लें।', pctOf: 'Y का X%', whatPct: 'A, B का कितना %', pchange: '% बदलाव', addSub: '% जोड़ें / घटाएँ', percent: 'प्रतिशत (%)', ofValue: 'मान का', ofTotal: 'कुल का', result: 'परिणाम', plusPct: 'बढ़ाने पर', minusPct: 'घटाने पर', cost: 'लागत मूल्य', sellPrice: 'बिक्री मूल्य', profit: 'लाभ', margin: 'मार्जिन (बिक्री मूल्य पर)', markup: 'मार्कअप (लागत पर)', targetMargin: 'लक्षित मार्जिन (%)', modePrices: 'कीमतों से', modeTarget: 'लक्षित मार्जिन', prodA: 'उत्पाद A', prodB: 'उत्पाद B', qty: 'मात्रा', cheaper: 'बेहतर सौदा', perUnit: 'प्रति इकाई कीमत', savingPct: 'बचत', same: 'कीमत बराबर', distance: 'दूरी', consumption: 'खपत', fuelPrice: 'ईंधन की कीमत', fuelNeeded: 'ज़रूरी ईंधन', tripCost: 'यात्रा खर्च', metricSys: 'मीट्रिक (किमी, ली.)', impSys: 'US (मील, गैलन)', initial: 'शुरुआती राशि', monthlyAdd: 'मासिक जमा', finalBal: 'अंतिम राशि', contributed: 'कुल जमा', earned: 'कमाया ब्याज', startT: 'शुरू का समय', endT: 'अंत का समय', breakMin: 'ब्रेक (मिनट)', hourlyRate: 'प्रति घंटा दर', hoursWorked: 'काम के घंटे', decimalH: 'दशमलव घंटे', pay: 'वेतन', karat: 'कैरेट', goldPrice: 'सोने की कीमत (24K)', perGram: 'प्रति ग्राम', perOz: 'प्रति ट्रॉय औंस', pureGold: 'शुद्ध सोना (ग्रा.)', goldValue: 'मूल्य', g2h: 'ग्रेगोरियन → हिजरी', h2g: 'हिजरी → ग्रेगोरियन', hijDate: 'हिजरी तारीख', gregDate: 'ग्रेगोरियन तारीख', day: 'दिन', month: 'महीना', year: 'साल', hijNote: 'उम्म अल-कुरा कैलेंडर। स्थानीय चाँद दिखने से एक दिन का फ़र्क़ हो सकता है।', zWealth: 'नकद, बचत, सोना और व्यापार का माल', zDebts: 'चुकाने योग्य कर्ज़', zGoldG: 'सोने की कीमत प्रति ग्राम (24K)', zNisab: 'निसाब (85 ग्राम सोना)', zDue: 'देय ज़कात (2.5%)', zBelow: 'निसाब से कम: ज़कात नहीं', zNote: 'सिर्फ़ अनुमान। मसलकों में नियम अलग हैं; किसी आलिम से पूछें।', ratesBy: 'दरें: Exchange Rate API' }
+  };
+  Object.keys(X).forEach((l) => Object.assign(I18N[l], X[l]));
 
   function detectLang() {
     const l = (navigator.language || 'en').slice(0, 2).toLowerCase();
@@ -374,14 +390,25 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
   /* ============================ OTHER TOOLS ============================ */
   const SCR = {};
 
-  /* ---- VAT ---- */
+  /* ---- VAT (by country) ---- */
+  const VATS = [['MA', 20], ['FR', 20], ['DE', 19], ['ES', 21], ['IT', 22], ['PT', 23], ['NL', 21], ['BE', 21], ['GB', 20], ['IE', 23], ['CH', 8.1], ['SE', 25], ['NO', 25], ['DK', 25], ['FI', 25.5], ['AT', 20], ['GR', 24], ['PL', 23], ['CZ', 21], ['HU', 27], ['RO', 21], ['TR', 20], ['UA', 20], ['IL', 18], ['SA', 15], ['AE', 5], ['EG', 14], ['DZ', 19], ['TN', 19], ['NG', 7.5], ['ZA', 15], ['IN', 18], ['PK', 18], ['CN', 13], ['JP', 10], ['KR', 10], ['SG', 9], ['ID', 11], ['AU', 10], ['NZ', 15], ['MX', 16]];
+  function regionName(c) {
+    try { return new Intl.DisplayNames([loc()], { type: 'region' }).of(c) || c; } catch (e) { return c; }
+  }
   SCR.tva = {
-    html: () => `
+    html: () => {
+      const list = VATS.map(([c, r]) => ({ c, r, n: regionName(c) })).sort((a, b) => a.n.localeCompare(b.n, loc()));
+      const region = ((navigator.language || '').split('-')[1] || '').toUpperCase();
+      const saved = store.get('tvaCty', VATS.some(v => v[0] === region) ? region : '');
+      const cur = list.find(x => x.c === saved);
+      return `
       <div class="seg" id="tvaMode"><button data-m="ttc" class="on">${t('toTTC')}</button><button data-m="ht">${t('toHT')}</button></div>
+      <label class="f"><span>${t('country')}</span><select id="tvaCty"><option value="">${t('custom')}</option>${list.map(x => `<option value="${x.c}" ${x.c === saved ? 'selected' : ''}>${x.n} — ${x.r}%</option>`).join('')}</select></label>
       ${field('tvaAmt', t('amount'))}
-      <div class="chips" id="tvaChips">${[20, 14, 10, 7].map(r => `<button data-r="${r}" class="${r === 20 ? 'on' : ''}">${r}%</button>`).join('')}</div>
-      ${field('tvaRate', t('rate'), 'value="20"')}
-      <div id="out" class="out"></div>`,
+      ${field('tvaRate', t('rate'), `value="${cur ? cur.r : 20}"`)}
+      <div id="out" class="out"></div>
+      <p class="note">${t('vatNote')}</p>`;
+    },
     bind() {
       let mode = 'ttc';
       const calc = () => {
@@ -392,11 +419,18 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
         $('#out').innerHTML = row(t('ht'), money(ht)) + row(t('vat') + ' (' + nf(r, 2) + '%)', money(ttc - ht)) + row(t('ttc'), money(ttc), 'big');
       };
       $('#tvaMode').onclick = (e) => { const b = e.target.closest('[data-m]'); if (!b) return; mode = b.dataset.m; [...$('#tvaMode').children].forEach(x => x.classList.toggle('on', x === b)); calc(); };
-      $('#tvaChips').onclick = (e) => { const b = e.target.closest('[data-r]'); if (!b) return; $('#tvaRate').value = b.dataset.r; [...$('#tvaChips').children].forEach(x => x.classList.toggle('on', x === b)); calc(); };
       $('#main').oninput = (e) => {
-        if (e.target.id === 'tvaRate') [...$('#tvaChips').children].forEach(x => x.classList.toggle('on', x.dataset.r === e.target.value));
+        if (e.target.id === 'tvaCty') {
+          const v = VATS.find(x => x[0] === e.target.value);
+          store.set('tvaCty', e.target.value);
+          if (v) $('#tvaRate').value = v[1];
+        } else if (e.target.id === 'tvaRate') {
+          const v = VATS.find(x => x[0] === $('#tvaCty').value);
+          if (v && String(v[1]) !== e.target.value) { $('#tvaCty').value = ''; store.set('tvaCty', ''); }
+        }
         calc();
       };
+      calc();
     }
   };
 
@@ -432,9 +466,9 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
     }
   };
 
-  /* ---- Currency ---- */
-  const CUR = ['MAD', 'EUR', 'USD', 'GBP', 'SAR', 'AED', 'CAD', 'CHF', 'TRY', 'CNY', 'JPY', 'RUB', 'INR', 'BRL', 'DZD', 'TND', 'EGP', 'QAR', 'KWD', 'AUD'];
-  const FALLBACK = { USD: 1, EUR: 0.92, GBP: 0.79, MAD: 9.9, SAR: 3.75, AED: 3.6725, CAD: 1.37, CHF: 0.88, TRY: 34, CNY: 7.2, JPY: 150, RUB: 92, INR: 83, BRL: 5.5, DZD: 134, TND: 3.1, EGP: 48, QAR: 3.64, KWD: 0.307, AUD: 1.5 };
+  /* ---- Currency (all world currencies) ---- */
+  const POPULAR = ['MAD', 'EUR', 'USD', 'GBP', 'SAR', 'AED', 'CAD', 'CHF', 'TRY', 'CNY', 'JPY', 'INR', 'RUB', 'BRL', 'DZD', 'TND', 'EGP', 'AUD'];
+  const FALLBACK = { USD: 1, EUR: 0.92, GBP: 0.79, MAD: 9.9, SAR: 3.75, AED: 3.6725, CAD: 1.37, CHF: 0.88, TRY: 34, CNY: 7.2, JPY: 150, RUB: 92, INR: 83, BRL: 5.5, DZD: 134, TND: 3.1, EGP: 48, QAR: 3.64, KWD: 0.307, AUD: 1.5, MXN: 18, KRW: 1350, SEK: 10.5, NOK: 10.6, DKK: 6.9, PLN: 4, NZD: 1.65, SGD: 1.34, HKD: 7.8, ZAR: 18, NGN: 1500, IDR: 15800, THB: 35, MYR: 4.5, PKR: 278, BDT: 118, ILS: 3.7, UAH: 41, CZK: 23, HUF: 360, RON: 4.6, ARS: 900, CLP: 950, COP: 4000, PEN: 3.75 };
   const getRates = () => { const c = store.get('rates', null); return c && c.r ? c : { r: FALLBACK, t: 0 }; };
   async function fetchRates() {
     const ctl = new AbortController();
@@ -446,36 +480,65 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
       store.set('rates', { r: j.rates, t: Date.now() });
     } finally { clearTimeout(to); }
   }
+  const dnCache = {};
+  function curName(code) {
+    try {
+      const k = loc();
+      if (!dnCache[k]) dnCache[k] = new Intl.DisplayNames([k], { type: 'currency' });
+      const n = dnCache[k].of(code);
+      return n && n !== code ? n : '';
+    } catch (e) { return ''; }
+  }
+  function curList() {
+    const R = getRates().r;
+    const pop = POPULAR.filter(c => R[c]);
+    const rest = Object.keys(R).filter(c => !pop.includes(c)).sort();
+    return pop.concat(rest);
+  }
   SCR.cur = {
-    html: () => {
-      const opts = (sel) => CUR.map(c => `<option ${c === sel ? 'selected' : ''}>${c}</option>`).join('');
-      return `${field('cuAmt', t('amount'), 'value="100"')}
-        <div class="two"><label class="f"><span>${t('from')}</span><select id="cuFrom">${opts(store.get('cuFrom', 'EUR'))}</select></label>
+    html: () => `${field('cuAmt', t('amount'), 'value="100"')}
+        <label class="f"><span>${t('search')}</span><input id="cuSearch" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="USD, Euro…"></label>
+        <div class="two"><label class="f"><span>${t('from')}</span><select id="cuFrom"></select></label>
         <button id="cuSwap" class="sw" aria-label="swap">⇄</button>
-        <label class="f"><span>${t('to')}</span><select id="cuTo">${opts(store.get('cuTo', 'MAD'))}</select></label></div>
+        <label class="f"><span>${t('to')}</span><select id="cuTo"></select></label></div>
         <div id="out" class="out"></div>
         <p class="note" id="cuNote"></p>
-        <button id="cuUpd" class="btn">${t('update')}</button>`;
-    },
+        <p class="note"><a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">${t('ratesBy')}</a></p>
+        <button id="cuUpd" class="btn">${t('update')}</button>`,
     bind() {
+      let from = store.get('cuFrom', 'EUR'), to = store.get('cuTo', 'MAD');
+      const fill = () => {
+        const q = $('#cuSearch').value.trim().toLowerCase();
+        const list = curList();
+        [['cuFrom', from], ['cuTo', to]].forEach(([id, cur]) => {
+          const items = list.filter(c => c === cur || !q || c.toLowerCase().includes(q) || curName(c).toLowerCase().includes(q));
+          $('#' + id).innerHTML = items.map(c => `<option value="${c}" ${c === cur ? 'selected' : ''}>${c}${curName(c) ? ' — ' + curName(c) : ''}</option>`).join('');
+        });
+      };
       const calc = () => {
-        const a = num('cuAmt'), f = $('#cuFrom').value, to = $('#cuTo').value;
-        store.set('cuFrom', f); store.set('cuTo', to);
+        const a = num('cuAmt');
+        store.set('cuFrom', from); store.set('cuTo', to);
         const R = getRates().r;
-        if (isNaN(a) || !R[f] || !R[to]) { $('#out').innerHTML = ''; return; }
-        const v = a / R[f] * R[to];
-        $('#out').innerHTML = row(f + ' → ' + to, nf(v, 4), 'big') + row('1 ' + f, nf(R[to] / R[f], 4) + ' ' + to);
+        if (isNaN(a) || !R[from] || !R[to]) { $('#out').innerHTML = ''; return; }
+        const v = a / R[from] * R[to];
+        $('#out').innerHTML = row(from + ' → ' + to, nf(v, 4), 'big') + row('1 ' + from, nf(R[to] / R[from], 4) + ' ' + to);
       };
       const note = () => { const c = getRates(); $('#cuNote').textContent = c.t ? t('updated') + ': ' + new Date(c.t).toLocaleString(loc()) : t('approx'); };
       const upd = async () => {
         $('#cuNote').textContent = t('loading');
         try { await fetchRates(); } catch (e) { toast(t('failed')); }
-        note(); calc();
+        if (!$('#cuNote')) return;
+        fill(); note(); calc();
       };
-      $('#main').oninput = calc;
-      $('#cuSwap').onclick = () => { const f = $('#cuFrom'), to = $('#cuTo'); const x = f.value; f.value = to.value; to.value = x; calc(); };
+      $('#main').oninput = (e) => {
+        if (e.target.id === 'cuSearch') fill();
+        else if (e.target.id === 'cuFrom') from = e.target.value;
+        else if (e.target.id === 'cuTo') to = e.target.value;
+        calc();
+      };
+      $('#cuSwap').onclick = () => { const x = from; from = to; to = x; fill(); calc(); };
       $('#cuUpd').onclick = upd;
-      note(); calc();
+      fill(); note(); calc();
       const c = getRates();
       if (navigator.onLine && (!c.t || Date.now() - c.t > 6 * 3600 * 1000)) upd();
     }
@@ -605,11 +668,288 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
     }
   };
 
+  /* ============================ NEW TOOLS ============================ */
+  const errRow = () => `<div class="orow err">${t('invalid')}</div>`;
+  const segHTML = (id, items) => `<div class="seg" id="${id}">${items.map(([m, l], i) => `<button data-m="${m}" class="${i === 0 ? 'on' : ''}">${l}</button>`).join('')}</div>`;
+  const segBind = (id, cb) => {
+    $('#' + id).onclick = (e) => {
+      const b = e.target.closest('[data-m]'); if (!b) return;
+      [...$('#' + id).children].forEach(x => x.classList.toggle('on', x === b));
+      cb(b.dataset.m);
+    };
+  };
+
+  /* ---- Percentages ---- */
+  SCR.pct = {
+    html: () => `<label class="f"><select id="pcMode"><option value="of">${t('pctOf')}</option><option value="what">${t('whatPct')}</option><option value="chg">${t('pchange')}</option><option value="addsub">${t('addSub')}</option></select></label>
+      <label class="f"><span id="pcLa"></span><input id="pcA" type="number" inputmode="decimal" step="any"></label>
+      <label class="f"><span id="pcLb"></span><input id="pcB" type="number" inputmode="decimal" step="any"></label>
+      <div id="out" class="out"></div>`,
+    bind() {
+      const LB = { of: ['percent', 'ofValue'], what: ['value', 'ofTotal'], chg: ['from', 'to'], addsub: ['percent', 'value'] };
+      const calc = () => {
+        const m = $('#pcMode').value, a = num('pcA'), b = num('pcB');
+        $('#pcLa').textContent = t(LB[m][0]); $('#pcLb').textContent = t(LB[m][1]);
+        if (isNaN(a) || isNaN(b)) { $('#out').innerHTML = ''; return; }
+        let h;
+        if (m === 'of') h = row(t('result'), nf(b * a / 100), 'big');
+        else if (m === 'what') h = b === 0 ? errRow() : row(t('result'), nf(a / b * 100, 4) + ' %', 'big');
+        else if (m === 'chg') {
+          if (a === 0) h = errRow();
+          else { const c = (b - a) / a * 100; h = row(t('pchange'), (c > 0 ? '+' : '') + nf(c, 4) + ' %', 'big') + row(t('diff'), nf(b - a)); }
+        } else h = row(t('plusPct'), nf(b * (1 + a / 100)), 'big') + row(t('minusPct'), nf(b * (1 - a / 100)));
+        $('#out').innerHTML = h;
+      };
+      $('#main').oninput = calc;
+      calc();
+    }
+  };
+
+  /* ---- Profit margin ---- */
+  SCR.marg = {
+    html: () => `${segHTML('mgMode', [['p', t('modePrices')], ['t', t('modeTarget')]])}
+      ${field('mgCost', t('cost'))}
+      <div id="mgSellW">${field('mgSell', t('sellPrice'))}</div>
+      <div id="mgTgtW" hidden>${field('mgTgt', t('targetMargin'), 'value="30"')}</div>
+      <div id="out" class="out"></div>`,
+    bind() {
+      let mode = 'p';
+      const calc = () => {
+        const c = num('mgCost');
+        if (isNaN(c)) { $('#out').innerHTML = ''; return; }
+        let price;
+        if (mode === 'p') { price = num('mgSell'); if (isNaN(price)) { $('#out').innerHTML = ''; return; } }
+        else {
+          const m = num('mgTgt');
+          if (isNaN(m)) { $('#out').innerHTML = ''; return; }
+          if (m >= 100) { $('#out').innerHTML = errRow(); return; }
+          price = c / (1 - m / 100);
+        }
+        const profit = price - c;
+        let h = row(t('profit'), money(profit), 'big');
+        if (mode === 't') h = row(t('sellPrice'), money(price), 'big') + row(t('profit'), money(profit));
+        if (price !== 0) h += row(t('margin'), nf(profit / price * 100, 2) + ' %');
+        if (c !== 0) h += row(t('markup'), nf(profit / c * 100, 2) + ' %');
+        $('#out').innerHTML = h;
+      };
+      segBind('mgMode', (m) => { mode = m; $('#mgSellW').hidden = m !== 'p'; $('#mgTgtW').hidden = m !== 't'; calc(); });
+      $('#main').oninput = calc;
+    }
+  };
+
+  /* ---- Compare prices ---- */
+  SCR.cmp = {
+    html: () => `<div class="sub">${t('prodA')}</div><div class="grid2">${field('cpPa', t('price'))}${field('cpQa', t('qty'))}</div>
+      <div class="sub">${t('prodB')}</div><div class="grid2">${field('cpPb', t('price'))}${field('cpQb', t('qty'))}</div>
+      <div id="out" class="out"></div>`,
+    bind() {
+      const calc = () => {
+        const pa = num('cpPa'), qa = num('cpQa'), pb = num('cpPb'), qb = num('cpQb');
+        if ([pa, qa, pb, qb].some(isNaN)) { $('#out').innerHTML = ''; return; }
+        if (qa <= 0 || qb <= 0 || pa < 0 || pb < 0) { $('#out').innerHTML = errRow(); return; }
+        const ua = pa / qa, ub = pb / qb;
+        let h = row(t('prodA') + ' · ' + t('perUnit'), nf(ua, 4)) + row(t('prodB') + ' · ' + t('perUnit'), nf(ub, 4));
+        if (Math.abs(ua - ub) < 1e-12) h += row(t('same'), '=', 'big');
+        else {
+          const lo = Math.min(ua, ub), hi = Math.max(ua, ub);
+          h += row(t('cheaper'), (ua < ub ? t('prodA') : t('prodB')) + ' · −' + nf((hi - lo) / hi * 100, 1) + ' %', 'big');
+        }
+        $('#out').innerHTML = h;
+      };
+      $('#main').oninput = calc;
+    }
+  };
+
+  /* ---- Trip cost ---- */
+  SCR.trip = {
+    html: () => `${segHTML('tpSys', [['m', t('metricSys')], ['i', t('impSys')]])}
+      <label class="f"><span id="tpLd"></span><input id="tpD" type="number" inputmode="decimal" step="any"></label>
+      <label class="f"><span id="tpLc"></span><input id="tpC" type="number" inputmode="decimal" step="any"></label>
+      <label class="f"><span id="tpLp"></span><input id="tpP" type="number" inputmode="decimal" step="any"></label>
+      ${field('tpN', t('people'), 'value="1" min="1" step="1"')}
+      <div id="out" class="out"></div>`,
+    bind() {
+      let sys = 'm';
+      const calc = () => {
+        const met = sys === 'm';
+        $('#tpLd').textContent = t('distance') + (met ? ' (km)' : ' (mi)');
+        $('#tpLc').textContent = t('consumption') + (met ? ' (L/100 km)' : ' (mpg)');
+        $('#tpLp').textContent = t('fuelPrice') + (met ? ' / L' : ' / gal');
+        const d = num('tpD'), c = num('tpC'), p = num('tpP'), n = Math.max(1, Math.round(num('tpN')));
+        if ([d, c, p].some(isNaN)) { $('#out').innerHTML = ''; return; }
+        if (c <= 0 || d < 0 || p < 0) { $('#out').innerHTML = errRow(); return; }
+        const fuel = met ? d * c / 100 : d / c, cost = fuel * p;
+        let h = row(t('fuelNeeded'), nf(fuel, 2) + (met ? ' L' : ' gal')) + row(t('tripCost'), money(cost), 'big');
+        if (n > 1) h += row(t('perPerson'), money(cost / n));
+        $('#out').innerHTML = h;
+      };
+      segBind('tpSys', (m) => { sys = m; calc(); });
+      $('#main').oninput = calc;
+      calc();
+    }
+  };
+
+  /* ---- Savings growth (compound interest) ---- */
+  SCR.comp = {
+    html: () => `${field('cmI', t('initial'))}${field('cmA', t('monthlyAdd'))}${field('cmR', t('annualRate'))}${field('cmY', t('years'))}<div id="out" class="out"></div>`,
+    bind() {
+      const calc = () => {
+        const I = num('cmI'), A = num('cmA') || 0, R = num('cmR'), Y = num('cmY');
+        if (isNaN(I) || isNaN(R) || isNaN(Y)) { $('#out').innerHTML = ''; return; }
+        const n = Math.round(Y * 12), r = R / 1200;
+        if (n <= 0 || n > 1200 || I < 0 || A < 0) { $('#out').innerHTML = errRow(); return; }
+        const g = Math.pow(1 + r, n);
+        const fv = I * g + (r === 0 ? A * n : A * (g - 1) / r);
+        const dep = I + A * n;
+        $('#out').innerHTML = row(t('finalBal'), money(fv), 'big') + row(t('contributed'), money(dep)) + row(t('earned'), money(fv - dep));
+      };
+      $('#main').oninput = calc;
+    }
+  };
+
+  /* ---- Work hours ---- */
+  SCR.hrs = {
+    html: () => `<div class="grid2"><label class="f"><span>${t('startT')}</span><input id="hrS" type="time" value="09:00"></label><label class="f"><span>${t('endT')}</span><input id="hrE" type="time" value="17:00"></label></div>
+      ${field('hrB', t('breakMin'), 'value="0" min="0"')}${field('hrR', t('hourlyRate'))}<div id="out" class="out"></div>`,
+    bind() {
+      const mins = (v) => { if (!v) return NaN; const [h, m] = v.split(':').map(Number); return h * 60 + m; };
+      const calc = () => {
+        const s = mins($('#hrS').value);
+        let e = mins($('#hrE').value);
+        const b = num('hrB') || 0, rate = num('hrR');
+        if (isNaN(s) || isNaN(e)) { $('#out').innerHTML = ''; return; }
+        if (e < s) e += 1440;
+        const w = e - s - b;
+        if (w < 0) { $('#out').innerHTML = errRow(); return; }
+        const hh = Math.floor(w / 60), mm = Math.round(w % 60);
+        let h = row(t('hoursWorked'), hh + ':' + String(mm).padStart(2, '0'), 'big') + row(t('decimalH'), nf(w / 60, 2));
+        if (!isNaN(rate)) h += row(t('pay'), money(w / 60 * rate));
+        $('#out').innerHTML = h;
+      };
+      $('#main').oninput = calc;
+      $('#main').onchange = calc;
+      calc();
+    }
+  };
+
+  /* ---- Gold ---- */
+  SCR.gold = {
+    html: () => `${field('gdW', t('weight') + ' (g)')}
+      <label class="f"><span>${t('karat')}</span><select id="gdK">${[24, 22, 21, 18, 14, 10, 9].map(k => `<option value="${k}" ${k === 21 ? 'selected' : ''}>${k}K</option>`).join('')}</select></label>
+      <div class="two"><label class="f"><span>${t('goldPrice')}</span><input id="gdP" type="number" inputmode="decimal" step="any"></label><span></span>
+      <label class="f"><span>&nbsp;</span><select id="gdU"><option value="g">${t('perGram')}</option><option value="oz">${t('perOz')}</option></select></label></div>
+      <div id="out" class="out"></div>`,
+    bind() {
+      const calc = () => {
+        const w = num('gdW'), k = +$('#gdK').value, p = num('gdP');
+        if (isNaN(w) || w < 0) { $('#out').innerHTML = ''; return; }
+        let h = row(t('pureGold'), nf(w * k / 24, 3));
+        if (!isNaN(p)) {
+          const pg = $('#gdU').value === 'oz' ? p / 31.1034768 : p;
+          h = row(t('goldValue'), money(w * k / 24 * pg), 'big') + h;
+        }
+        $('#out').innerHTML = h;
+      };
+      $('#main').oninput = calc;
+    }
+  };
+
+  /* ---- Hijri converter ---- */
+  let _hf;
+  const hijriFmt = () => _hf || (_hf = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-latn', { year: 'numeric', month: 'numeric', day: 'numeric', timeZone: 'UTC' }));
+  function toHijri(d) {
+    const p = hijriFmt().formatToParts(d);
+    const g = (k) => parseInt(p.find(x => x.type === k).value, 10);
+    return { y: g('year'), m: g('month'), d: g('day') };
+  }
+  function fromHijri(y, m, d) {
+    const guess = Date.UTC(622, 6, 19) + ((y - 1) * 354.36707 + (m - 1) * 29.530588 + (d - 1)) * 864e5;
+    const base = new Date(guess);
+    const noon = Date.UTC(base.getUTCFullYear(), base.getUTCMonth(), base.getUTCDate(), 12);
+    for (let i = 0; i <= 45; i++) {
+      for (const s of (i === 0 ? [0] : [i, -i])) {
+        const dt = new Date(noon + s * 864e5);
+        const h = toHijri(dt);
+        if (h.y === y && h.m === m && h.d === d) return dt;
+      }
+    }
+    return null;
+  }
+  SCR.hij = {
+    html: () => {
+      const n = new Date();
+      const iso = n.getFullYear() + '-' + String(n.getMonth() + 1).padStart(2, '0') + '-' + String(n.getDate()).padStart(2, '0');
+      return `${segHTML('hjMode', [['g', t('g2h')], ['h', t('h2g')]])}
+        <div id="hjG"><label class="f"><span>${t('gregDate')}</span><input id="hjDate" type="date" value="${iso}"></label></div>
+        <div id="hjH" hidden><div class="grid2">${field('hjD', t('day'), 'value="1" min="1" max="30" step="1"')}<label class="f"><span>${t('month')}</span><select id="hjM"></select></label></div>${field('hjY', t('year'), 'step="1"')}</div>
+        <div id="out" class="out"></div>
+        <p class="note">${t('hijNote')}</p>`;
+    },
+    bind() {
+      let mode = 'g';
+      const cal = loc() + '-u-ca-islamic-umalqura';
+      const fHij = new Intl.DateTimeFormat(cal, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+      const fGre = new Intl.DateTimeFormat(loc(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+      const fMon = new Intl.DateTimeFormat(cal, { month: 'long', timeZone: 'UTC' });
+      const cy = toHijri(new Date()).y;
+      $('#hjY').value = cy;
+      $('#hjM').innerHTML = Array.from({ length: 12 }, (_, i) => {
+        const dt = fromHijri(cy, i + 1, 1);
+        return `<option value="${i + 1}">${i + 1} · ${dt ? fMon.format(dt) : ''}</option>`;
+      }).join('');
+      const calc = () => {
+        if (mode === 'g') {
+          const v = $('#hjDate').value;
+          if (!v) { $('#out').innerHTML = ''; return; }
+          const [y, m, d] = v.split('-').map(Number);
+          const dt = new Date(Date.UTC(y, m - 1, d, 12));
+          const h = toHijri(dt);
+          $('#out').innerHTML = row(t('hijDate'), fHij.format(dt), 'big') + row('AH', h.d + ' / ' + h.m + ' / ' + h.y);
+        } else {
+          const d = Math.round(num('hjD')), m = +$('#hjM').value, y = Math.round(num('hjY'));
+          if (isNaN(d) || isNaN(y)) { $('#out').innerHTML = ''; return; }
+          const dt = y >= 1300 && y <= 1600 && d >= 1 && d <= 30 ? fromHijri(y, m, d) : null;
+          $('#out').innerHTML = dt ? row(t('gregDate'), fGre.format(dt), 'big') + row('', dt.getUTCDate() + ' / ' + (dt.getUTCMonth() + 1) + ' / ' + dt.getUTCFullYear()) : errRow();
+        }
+      };
+      segBind('hjMode', (m) => { mode = m; $('#hjG').hidden = m !== 'g'; $('#hjH').hidden = m !== 'h'; calc(); });
+      $('#main').oninput = calc;
+      $('#main').onchange = calc;
+      calc();
+    }
+  };
+
+  /* ---- Zakat ---- */
+  SCR.zakat = {
+    html: () => `${field('zkW', t('zWealth'))}${field('zkD', t('zDebts'), 'value="0" min="0"')}${field('zkG', t('zGoldG'))}<div id="out" class="out"></div><p class="note">${t('zNote')}</p>`,
+    bind() {
+      const calc = () => {
+        const w = num('zkW'), d = num('zkD') || 0, g = num('zkG');
+        if (isNaN(w) || isNaN(g) || g <= 0) { $('#out').innerHTML = ''; return; }
+        const net = w - d, nisab = 85 * g;
+        let h = row(t('zNisab'), money(nisab));
+        h += net >= nisab ? row(t('zDue'), money(net * 0.025), 'big') : `<div class="pill good">${t('zBelow')}</div>`;
+        $('#out').innerHTML = h;
+      };
+      $('#main').oninput = calc;
+    }
+  };
+
   SCR.calc = { html: calcHTML, bind: calcBind };
 
   /* ============================ SHELL ============================ */
-  const ORDER = ['calc', 'tva', 'disc', 'split', 'cur', 'unit', 'loan', 'date', 'bmi', 'prog'];
-  const ICON = { calc: '🧮', tva: '🧾', disc: '🏷️', split: '🍽️', cur: '💱', unit: '📏', loan: '🏦', date: '📅', bmi: '⚖️', prog: '💻' };
+  const NAV = ['calc', 'cur', 'tools'];
+  const TOOLS = ['tva', 'disc', 'split', 'pct', 'marg', 'cmp', 'trip', 'comp', 'loan', 'unit', 'date', 'hij', 'hrs', 'bmi', 'gold', 'zakat', 'prog'];
+  const ICON = { calc: '🧮', cur: '💱', tools: '🧰', tva: '🧾', disc: '🏷️', split: '🍽️', pct: '📊', marg: '💹', cmp: '🛒', trip: '⛽', comp: '📈', loan: '🏦', unit: '📏', date: '📅', hij: '🌙', hrs: '⏱️', bmi: '⚖️', gold: '🪙', zakat: '🤲', prog: '💻' };
+
+  function go(id) { S.screen = id; store.set('screen', id); render(); }
+
+  SCR.tools = {
+    html: () => `<div class="grid">${TOOLS.map(id => `<button class="card" data-s="${id}"><i>${ICON[id]}</i><span>${t(id)}</span></button>`).join('')}</div>`,
+    bind() {
+      $('#main').onclick = (e) => { const b = e.target.closest('[data-s]'); if (b) go(b.dataset.s); };
+    }
+  };
 
   function applyTheme() {
     const d = document.documentElement;
@@ -620,9 +960,8 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
   }
 
   function renderNav() {
-    $('#nav').innerHTML = ORDER.map(id => `<button data-s="${id}" class="${id === S.screen ? 'on' : ''}"><i>${ICON[id]}</i><span>${t(id)}</span></button>`).join('');
-    const on = $('#nav .on');
-    if (on && on.scrollIntoView) on.scrollIntoView({ inline: 'center', block: 'nearest' });
+    const active = NAV.includes(S.screen) ? S.screen : 'tools';
+    $('#nav').innerHTML = NAV.map(id => `<button data-s="${id}" class="${id === active ? 'on' : ''}"><i>${ICON[id]}</i><span>${t(id)}</span></button>`).join('');
   }
 
   function render() {
@@ -635,6 +974,10 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
     $('#title').textContent = t(S.screen);
     $('#histBtn').setAttribute('aria-label', t('hist'));
     $('#settBtn').setAttribute('aria-label', t('sett'));
+    const bb = $('#backBtn');
+    bb.hidden = !TOOLS.includes(S.screen);
+    bb.textContent = S.lang === 'ar' ? '→' : '←';
+    bb.setAttribute('aria-label', t('back'));
     main.innerHTML = SCR[S.screen].html();
     main.scrollTop = 0;
     SCR[S.screen].bind();
@@ -686,6 +1029,7 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
 
   function init() {
     $('#nav').onclick = (e) => { const b = e.target.closest('[data-s]'); if (!b) return; S.screen = b.dataset.s; store.set('screen', S.screen); render(); };
+    $('#backBtn').onclick = () => go('tools');
     $('#histBtn').onclick = openHistory;
     $('#settBtn').onclick = openSettings;
     $('#modalClose').onclick = closeModal;

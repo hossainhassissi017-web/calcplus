@@ -1,7 +1,7 @@
 {
   "name": "CalcPlus",
   "short_name": "CalcPlus",
-  "description": "Calculator with VAT, discount, split bill, currency, units, loan, dates, BMI and number bases in 10 languages.",
+  "description": "Calculator and everyday tools: currency, VAT, percentages, margin, savings, gold, Hijri date, zakat and more, in 10 languages.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
