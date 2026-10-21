@@ -7,7 +7,7 @@
 
 /* ============================ ENGINE ============================ */
 function tokenize(s) {
-  const re = /\s*(\d+\.?\d*|\.\d+|asin\(|acos\(|atan\(|sin\(|cos\(|tan\(|log\(|ln\(|√\(|π|e|[+\-−×÷*\/^()%!])/y;
+  const re = /\s*(\d+\.?\d*|\.\d+|(?:asinh|acosh|atanh|asin|acos|atan|sinh|cosh|tanh|sin|cos|tan|log2|log|ln|cbrt|abs|floor|ceil|round|exp10|exp2|exp)\(|√\(|nCr|nPr|mod|gcd|lcm|ANS|π|e|[+\-−×÷*\/^()%!])/y;
   const out = [];
   re.lastIndex = 0;
   while (re.lastIndex < s.length) {
@@ -19,7 +19,8 @@ function tokenize(s) {
     }
     const x = m[1];
     if (/^[\d.]/.test(x)) out.push({ t: 'n', v: parseFloat(x) });
-    else if (x === 'π' || x === 'e') out.push({ t: 'c', v: x });
+    else if (x === 'π' || x === 'e' || x === 'ANS') out.push({ t: 'c', v: x });
+    else if (x === 'nCr' || x === 'nPr' || x === 'mod' || x === 'gcd' || x === 'lcm') out.push({ t: 'o', v: x });
     else if (x.length > 1 && x.endsWith('(')) out.push({ t: 'f', v: x === '√(' ? 'sqrt' : x.slice(0, -1) });
     else out.push({ t: 'o', v: x === '−' ? '-' : x === '×' ? '*' : x === '÷' ? '/' : x });
   }
@@ -31,6 +32,29 @@ function factorial(n) {
   let r = 1;
   for (let i = 2; i <= n; i++) r *= i;
   return r;
+}
+
+const BINOPS = ['nCr', 'nPr', 'mod', 'gcd', 'lcm'];
+function binop(op, a, b) {
+  const isInt = (x) => Number.isInteger(x);
+  switch (op) {
+    case 'mod':
+      if (b === 0) throw new Error('mod');
+      return ((a % b) + b) % b;
+    case 'nCr': case 'nPr': {
+      if (!isInt(a) || !isInt(b) || a < 0 || b < 0 || b > a || a > 1000) throw new Error('comb');
+      let r = 1;
+      for (let i = 0; i < b; i++) r = op === 'nPr' ? r * (a - i) : r * (a - i) / (i + 1);
+      return Math.round(r) === r || op === 'nPr' ? r : Math.round(r);
+    }
+    case 'gcd': case 'lcm': {
+      if (!isInt(a) || !isInt(b)) throw new Error('int');
+      let x = Math.abs(a), y = Math.abs(b);
+      while (y) { const t = y; y = x % y; x = t; }
+      return op === 'gcd' ? x : (x === 0 ? 0 : Math.abs(a * b) / x);
+    }
+    default: throw new Error('op');
+  }
 }
 
 function applyFn(f, a, deg) {
@@ -48,13 +72,28 @@ function applyFn(f, a, deg) {
     case 'log': r = Math.log10(a); break;
     case 'ln': r = Math.log(a); break;
     case 'sqrt': r = Math.sqrt(a); break;
+    case 'sinh': r = Math.sinh(a); break;
+    case 'cosh': r = Math.cosh(a); break;
+    case 'tanh': r = Math.tanh(a); break;
+    case 'asinh': r = Math.asinh(a); break;
+    case 'acosh': r = Math.acosh(a); break;
+    case 'atanh': r = Math.atanh(a); break;
+    case 'cbrt': r = Math.cbrt(a); break;
+    case 'abs': r = Math.abs(a); break;
+    case 'log2': r = Math.log2(a); break;
+    case 'floor': r = Math.floor(a); break;
+    case 'ceil': r = Math.ceil(a); break;
+    case 'round': r = Math.round(a); break;
+    case 'exp': r = Math.exp(a); break;
+    case 'exp10': r = Math.pow(10, a); break;
+    case 'exp2': r = Math.pow(2, a); break;
     default: throw new Error('fn');
   }
   if (!isFinite(r)) throw new Error('math');
   return Math.abs(r) < 1e-12 ? 0 : r;
 }
 
-function evaluate(str, deg) {
+function evaluate(str, deg, ans) {
   const toks = tokenize(str);
   let i = 0;
   const peek = () => toks[i];
@@ -80,6 +119,10 @@ function evaluate(str, deg) {
         i++;
         const r = unary();
         l = { v: t.v === '*' ? l.v * r.v : l.v / r.v };
+      } else if (t.t === 'o' && BINOPS.includes(t.v)) {
+        i++;
+        const r = unary();
+        l = { v: binop(t.v, l.v, r.v) };
       } else if (startsOperand(t)) {
         const r = unary();
         l = { v: l.v * r.v };
@@ -112,7 +155,7 @@ function evaluate(str, deg) {
     const t = toks[i++];
     if (!t) throw new Error('end');
     if (t.t === 'n') return t.v;
-    if (t.t === 'c') return t.v === 'π' ? Math.PI : Math.E;
+    if (t.t === 'c') return t.v === 'π' ? Math.PI : t.v === 'ANS' ? (typeof ans === 'number' ? ans : 0) : Math.E;
     if (t.t === 'f') { const a = expr().v; close(); return applyFn(t.v, a, deg); }
     if (t.t === 'o' && t.v === '(') { const a = expr().v; close(); return a; }
     throw new Error('syntax');
@@ -187,6 +230,7 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
     vib: store.get('vib', true),
     deg: store.get('deg', true),
     sci: store.get('sci', false),
+    tab: store.get('sciTab', 'trig'),
     screen: store.get('screen', 'calc')
   };
   const t = (k) => (I18N[S.lang] && I18N[S.lang][k]) || I18N.en[k] || k;
@@ -234,7 +278,7 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
   }
 
   /* ============================ CALCULATOR ============================ */
-  const CALC = { expr: '', prev: '', done: false, resText: '', mem: store.get('mem', 0) };
+  const CALC = { expr: '', prev: '', done: false, resText: '', mem: store.get('mem', 0), ans: store.get('ans', 0) };
   const OPS = ['+', '−', '×', '÷'];
 
   function tryEval(s) {
@@ -243,19 +287,29 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
     if (!s) return null;
     const open = (s.match(/\(/g) || []).length - (s.match(/\)/g) || []).length;
     if (open > 0) s += ')'.repeat(open);
-    try { const v = evaluate(s, S.deg); return isFinite(v) ? v : null; } catch (e) { return null; }
+    try { const v = evaluate(s, S.deg, CALC.ans); return isFinite(v) ? v : null; } catch (e) { return null; }
   }
+
+  const SCI_TABS = [['trig', 'sin'], ['hyp', 'sinh'], ['pow', '√'], ['log', 'log'], ['cmb', 'nCr']];
+  const SCI_SETS = {
+    trig: [['sin', 'sin('], ['cos', 'cos('], ['tan', 'tan('], ['π', 'π'], ['e', 'e'], ['sin⁻¹', 'asin('], ['cos⁻¹', 'acos('], ['tan⁻¹', 'atan('], ['ANS', 'ANS'], ['±', 'NEG']],
+    hyp: [['sinh', 'sinh('], ['cosh', 'cosh('], ['tanh', 'tanh('], ['π', 'π'], ['e', 'e'], ['sinh⁻¹', 'asinh('], ['cosh⁻¹', 'acosh('], ['tanh⁻¹', 'atanh(']],
+    pow: [['√', '√('], ['∛', 'cbrt('], ['ʸ√x', '^(1÷'], ['x²', '^2'], ['x³', '^3'], ['xʸ', '^'], ['1/x', 'INV'], ['|x|', 'abs('], ['10ˣ', 'exp10('], ['eˣ', 'exp(']],
+    log: [['log', 'log('], ['ln', 'ln('], ['log₂', 'log2('], ['10ˣ', 'exp10('], ['eˣ', 'exp('], ['2ˣ', 'exp2('], ['⌊x⌋', 'floor('], ['⌈x⌉', 'ceil('], ['round', 'round(']],
+    cmb: [['x!', '!'], ['nCr', 'nCr'], ['nPr', 'nPr'], ['mod', 'mod'], ['gcd', 'gcd'], ['lcm', 'lcm'], ['EE', 'EE'], ['ANS', 'ANS'], ['±', 'NEG'], ['%', '%']]
+  };
+  const sciKeysHTML = () => (SCI_SETS[S.tab] || SCI_SETS.trig).map(([l, v]) => `<button class="k sm" data-k="${v}">${l}</button>`).join('');
 
   function calcHTML() {
     const k = (l, v, c = '') => `<button class="k ${c}" data-k="${v}">${l}</button>`;
-    const sciKeys = [['sin', 'sin('], ['cos', 'cos('], ['tan', 'tan('], ['sin⁻¹', 'asin('], ['cos⁻¹', 'acos('], ['tan⁻¹', 'atan('], ['log', 'log('], ['ln', 'ln('], ['√', '√('], ['x²', '^2'], ['xʸ', '^'], ['x!', '!'], ['π', 'π'], ['e', 'e'], ['1/x', 'INV']];
+    const k0 = (l, v, c = '') => `<button class="k ${c}" data-k="${v}">${l}</button>`;
     return `
       <div class="disp"><button id="shBtn" class="shr" aria-label="${t('share')}">⤴</button><div id="expr" class="expr"></div><div id="res" class="res" title="${t('copy')}">0</div></div>
       <div class="tools">
-        <button data-k="MC">MC</button><button data-k="MR">MR</button><button data-k="M+">M+</button><button data-k="M-">M−</button>
+        <button data-k="MC">MC</button><button data-k="MR">MR</button><button data-k="M+">M+</button><button data-k="M-">M−</button><button data-k="MS">MS</button>
         <button data-k="SCI" class="${S.sci ? 'on' : ''}">f(x)</button><button data-k="DEG" class="${S.deg ? '' : 'on'}">${S.deg ? 'DEG' : 'RAD'}</button>
       </div>
-      <div class="sci" id="sci" ${S.sci ? '' : 'hidden'}>${sciKeys.map(([l, v]) => k(l, v, 'sm')).join('')}</div>
+      <div class="sciw" id="sci" ${S.sci ? '' : 'hidden'}><div class="stabs" id="stabs">${SCI_TABS.map(([id, l]) => `<button data-tab="${id}" class="${id === S.tab ? 'on' : ''}">${l}</button>`).join('')}</div><div class="sci" id="sciKeys">${sciKeysHTML()}</div></div>
       <div class="pad">
         ${k('AC', 'AC', 'fn')}${k('( )', 'PAREN', 'fn')}${k('%', '%', 'fn')}${k('÷', '÷', 'op')}
         ${k('7', '7')}${k('8', '8')}${k('9', '9')}${k('×', '×', 'op')}
@@ -295,11 +349,11 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
     const E = CALC;
     vibrate();
     const isDigit = /^[0-9.]$/.test(v);
-    const isStart = /^(asin|acos|atan|sin|cos|tan|log|ln|√)\($|^[π(]$|^e$/.test(v);
+    const isStart = /^[a-z]{2,}[0-9]*\($|^√\($|^[π(]$|^e$|^ANS$/.test(v);
     if (v === 'AC') { E.expr = ''; E.done = false; return calcUpdate(); }
     if (v === 'DEL') {
       E.done = false;
-      E.expr = E.expr.replace(/(asin\(|acos\(|atan\(|sin\(|cos\(|tan\(|log\(|ln\(|√\(|[\s\S])$/, '');
+      E.expr = E.expr.replace(/(\s(?:nCr|nPr|mod|gcd|lcm)\s|[a-z]{2,}[0-9]*\(|√\(|ANS|[\s\S])$/, '');
       return calcUpdate();
     }
     if (v === '=') {
@@ -307,6 +361,7 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
       if (val === null || !E.expr) { if (E.expr) toast(t('invalid')); return; }
       const txt = fmtNum(val);
       pushHistory(E.expr, txt);
+      CALC.ans = val; store.set('ans', val);
       E.prev = E.expr;
       E.resText = txt;
       E.expr = txt.replace(/e\+?(-?\d+)/, '×10^$1');
@@ -315,6 +370,28 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
     }
     if (v === 'SCI') { S.sci = !S.sci; store.set('sci', S.sci); $('#sci').hidden = !S.sci; $('[data-k="SCI"]').classList.toggle('on', S.sci); return; }
     if (v === 'DEG') { S.deg = !S.deg; store.set('deg', S.deg); const b = $('[data-k="DEG"]'); b.textContent = S.deg ? 'DEG' : 'RAD'; b.classList.toggle('on', !S.deg); return calcUpdate(); }
+    if (v === 'NEG') {
+      if (E.done) { E.done = false; }
+      const m = E.expr.match(/(\d+\.?\d*|\.\d+)$/);
+      if (!m) { if (E.expr === '−') E.expr = ''; else if (!E.expr) E.expr = '−'; return calcUpdate(); }
+      const head = E.expr.slice(0, E.expr.length - m[0].length);
+      if (/(^|[(+×÷^])−$/.test(head)) E.expr = head.slice(0, -1) + m[0];
+      else E.expr = head + '−' + m[0];
+      return calcUpdate();
+    }
+    if (v === 'EE') {
+      if (!E.expr || !/[0-9.)πe]$/.test(E.expr)) return;
+      E.done = false; E.expr += '×10^'; return calcUpdate();
+    }
+    if (v === 'nCr' || v === 'nPr' || v === 'mod' || v === 'gcd' || v === 'lcm') {
+      if (!E.expr || !/[0-9.)πe!%]$|ANS$/.test(E.expr)) return;
+      E.done = false; E.expr += ' ' + v + ' '; return calcUpdate();
+    }
+    if (v === 'MS') {
+      const val = tryEval(E.expr);
+      if (val === null) return;
+      E.mem = parseFloat(val.toPrecision(12)); store.set('mem', E.mem); toast('M = ' + fmtNum(E.mem)); return calcUpdate();
+    }
     if (v === 'MC') { E.mem = 0; store.set('mem', 0); return calcUpdate(); }
     if (v === 'M+' || v === 'M-') {
       const val = tryEval(E.expr);
@@ -363,7 +440,7 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
       else E.expr += v;
       return calcUpdate();
     }
-    if (v === '^' || v === '!' || v === '%' || v === '^2') {
+    if (v === '^' || v === '!' || v === '%' || v === '^2' || v === '^3' || v === '^(1÷') {
       if (!E.expr || OPS.includes(last) || last === '(' || last === '^') return;
     }
     E.expr += v;
@@ -375,6 +452,13 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
     main.onclick = (e) => {
       const b = e.target.closest('[data-k]');
       if (b) return press(b.dataset.k);
+      const tb = e.target.closest('[data-tab]');
+      if (tb) {
+        S.tab = tb.dataset.tab; store.set('sciTab', S.tab);
+        $('#sciKeys').innerHTML = sciKeysHTML();
+        [...$('#stabs').children].forEach(x => x.classList.toggle('on', x === tb));
+        return;
+      }
       if (e.target.closest('#shBtn')) {
         const r = CALC.done ? CALC.prev + ' = ' + CALC.resText : ($('#res').textContent || '');
         return shareText(r + ' — CalcPlus');
