@@ -671,12 +671,14 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
   };
 
   SCR.cur = {
-    html: () => `${field('cuAmt', t('amount'), 'value="100"')}
-        <label class="f"><span>${t('search')}</span><input id="cuSearch" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="USD, Euro, Gold, Bitcoin…"></label>
-        <div class="two"><label class="f"><span>${t('from')}</span><select id="cuFrom"></select></label>
-        <button id="cuSwap" class="sw" aria-label="swap">⇄</button>
-        <label class="f"><span>${t('to')}</span><select id="cuTo"></select></label></div>
+    html: () => `<div class="cv">
+          <div class="cvrow"><input id="cuAmt" type="number" inputmode="decimal" step="any" value="100" aria-label="${t('amount')}"><select id="cuFrom" aria-label="${t('from')}"></select></div>
+          <button id="cuSwap" class="cvsw" aria-label="swap">⇅</button>
+          <div class="cvrow"><input id="cuRes" type="number" inputmode="decimal" step="any" aria-label="${t('to')}"><select id="cuTo" aria-label="${t('to')}"></select></div>
+        </div>
+        <p class="cvrate" id="cuRate"></p>
         <div class="chips" id="cuFavs"></div>
+        <label class="f srch"><input id="cuSearch" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="🔍 ${t('search')}: USD, Euro, Gold, Bitcoin…"></label>
         <div id="out" class="out"></div>
         <p class="note" id="cuNote"></p>
         <p class="note">${t('assetNote')}</p>
@@ -699,13 +701,24 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
           }).join('');
         });
       };
-      const calc = () => {
-        const a = num('cuAmt');
+      const setRes = (v) => { $('#cuRes').value = isFinite(v) ? String(parseFloat(v.toPrecision(8))) : ''; };
+      const calc = (src) => {
         store.set('cuFrom', from); store.set('cuTo', to);
         const C = getRates(), R = C.r;
-        if (isNaN(a) || !R[from] || !R[to]) { $('#out').innerHTML = ''; return; }
+        if (!R[from] || !R[to]) { $('#out').innerHTML = ''; $('#cuRate').textContent = ''; return; }
+        let a = num('cuAmt');
+        if (src === 'res') {
+          const r = num('cuRes');
+          if (isNaN(r)) { $('#cuAmt').value = ''; $('#out').innerHTML = ''; return; }
+          a = r / R[to] * R[from];
+          $('#cuAmt').value = String(parseFloat(a.toPrecision(8)));
+        }
+        const unit = R[to] / R[from];
+        $('#cuRate').textContent = '1 ' + from + ' = ' + fmtConv(unit) + ' ' + to;
+        if (isNaN(a)) { $('#out').innerHTML = ''; if (src !== 'res') setRes(NaN); return; }
         const v = a / R[from] * R[to];
-        let h = row(flagOf(from) + ' ' + from + ' → ' + flagOf(to) + ' ' + to, fmtConv(v), 'big') + row('1 ' + from, fmtConv(R[to] / R[from]) + ' ' + to);
+        if (src !== 'res') setRes(v);
+        let h = `<div class="orow hid"><span>${fmtConv(a)} ${from}</span><b>${fmtConv(v)} ${to}</b></div>`;
         const stamps = [...new Set([kindOf(from), kindOf(to)])].filter(k => k !== 'fx').map(k => stampOf(C, k)).filter(x => x > 0);
         if (stamps.length) h += row(t('updated'), new Date(Math.min(...stamps)).toLocaleString(loc()));
         $('#out').innerHTML = h;
@@ -721,7 +734,7 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
         if (e.target.id === 'cuSearch') fill();
         else if (e.target.id === 'cuFrom') from = e.target.value;
         else if (e.target.id === 'cuTo') to = e.target.value;
-        calc();
+        calc(e.target.id === 'cuRes' ? 'res' : undefined);
       };
       $('#main').onclick = (e) => {
         const b = e.target.closest('#cuFavs [data-w]');
