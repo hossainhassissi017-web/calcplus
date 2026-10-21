@@ -1057,25 +1057,42 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
   function go(id) { S.screen = id; store.set('screen', id); render(); }
 
   SCR.tools = {
-    html: () => `<div class="grid">${TOOLS.map(id => `<button class="card" data-s="${id}"><i>${ICON[id]}</i><span>${t(id)}</span></button>`).join('')}</div>`,
+    html: () => `<label class="f srch"><input id="toolQ" type="search" autocomplete="off" placeholder="${t('search')}…"></label>
+      <div class="rows" id="toolRows">${TOOLS.map(id => `<button class="row" data-s="${id}" data-n="${t(id).toLowerCase()}"><i class="ico">${ICON[id]}</i><span>${t(id)}</span><em>›</em></button>`).join('')}</div>
+      <p class="empty" id="toolNone" hidden>—</p>`,
     bind() {
       $('#main').onclick = (e) => { const b = e.target.closest('[data-s]'); if (b) go(b.dataset.s); };
+      $('#main').oninput = (e) => {
+        if (e.target.id !== 'toolQ') return;
+        const q = e.target.value.trim().toLowerCase();
+        let n = 0;
+        $('#toolRows').querySelectorAll('.row').forEach(r => { const m = !q || r.dataset.n.includes(q); r.hidden = !m; if (m) n++; });
+        $('#toolNone').hidden = n > 0;
+      };
     }
   };
 
-  const ACCENTS = ['#ff9500', '#2f6fed', '#0d9488', '#16a34a', '#7c3aed', '#db2777', '#e11d48', '#4f46e5', '#b45309', '#475569'];
+  const ACCENTS = ['#6366f1', '#2f6fed', '#0d9488', '#16a34a', '#7c3aed', '#db2777', '#e11d48', '#ff9500', '#b45309', '#475569'];
   function applyTheme() {
     const d = document.documentElement;
     d.style.setProperty('--acc', ACCENTS[S.accent] || ACCENTS[0]);
     if (S.theme === 'auto') d.removeAttribute('data-theme'); else d.setAttribute('data-theme', S.theme);
     const dark = S.theme === 'dark' || (S.theme === 'auto' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
     const m = document.querySelector('meta[name="theme-color"]');
-    if (m) m.setAttribute('content', dark ? '#0f1115' : '#f4f5f7');
+    if (m) m.setAttribute('content', dark ? '#090a10' : '#f3f4fb');
   }
 
+  const SVG = {
+    calc: '<rect x="5" y="3" width="14" height="18" rx="3"/><path d="M8.5 7.5h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/>',
+    tools: '<path d="M12 3l4 7H8z"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><circle cx="17.2" cy="17.2" r="3.3"/>',
+    cur: '<circle cx="9" cy="9" r="5.5"/><circle cx="15" cy="15" r="5.5"/>',
+    hist: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    sett: '<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>'
+  };
+  const NAV5 = ['calc', 'tools', 'cur', 'hist', 'sett'];
   function renderNav() {
     const active = NAV.includes(S.screen) ? S.screen : 'tools';
-    $('#nav').innerHTML = NAV.map(id => `<button data-s="${id}" class="${id === active ? 'on' : ''}"><i>${ICON[id]}</i><span>${t(id)}</span></button>`).join('');
+    $('#nav').innerHTML = NAV5.map(id => `<button data-s="${id}" class="${id === active ? 'on' : ''}"><svg viewBox="0 0 24 24" aria-hidden="true">${SVG[id]}</svg><span>${t(id)}</span></button>`).join('');
   }
 
   function render() {
@@ -1085,9 +1102,7 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
     if (!SCR[S.screen]) S.screen = 'calc';
     const main = $('#main');
     main.onclick = null; main.oninput = null; main.onchange = null;
-    $('#title').textContent = t(S.screen);
-    $('#histBtn').setAttribute('aria-label', t('hist'));
-    $('#settBtn').setAttribute('aria-label', t('sett'));
+    if (S.screen === 'calc') $('#title').innerHTML = 'Calc<b>Plus</b>'; else $('#title').textContent = t(S.screen);
     const bb = $('#backBtn');
     bb.hidden = !TOOLS.includes(S.screen);
     bb.textContent = S.lang === 'ar' ? '→' : '←';
@@ -1153,10 +1168,8 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
   }
 
   function init() {
-    $('#nav').onclick = (e) => { const b = e.target.closest('[data-s]'); if (!b) return; S.screen = b.dataset.s; store.set('screen', S.screen); render(); };
+    $('#nav').onclick = (e) => { const b = e.target.closest('[data-s]'); if (!b) return; if (b.dataset.s === 'hist') return openHistory(); if (b.dataset.s === 'sett') return openSettings(); S.screen = b.dataset.s; store.set('screen', S.screen); render(); };
     $('#backBtn').onclick = () => go('tools');
-    $('#histBtn').onclick = openHistory;
-    $('#settBtn').onclick = openSettings;
     $('#modalClose').onclick = closeModal;
     $('#modal').onclick = (e) => { if (e.target.id === 'modal') closeModal(); };
     $('#main').addEventListener('click', (e) => {
