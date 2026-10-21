@@ -1156,10 +1156,13 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
     }
   };
 
-  const ACCENTS = ['#6366f1', '#2f6fed', '#0d9488', '#16a34a', '#7c3aed', '#db2777', '#e11d48', '#ff9500', '#b45309', '#475569'];
+  const ACCENTS = [['#6366f1', '#a855f7'], ['#3b82f6', '#22d3ee'], ['#a855f7', '#ec4899'], ['#10b981', '#84cc16'], ['#ef4444', '#f97316'], ['#f97316', '#f59e0b'], ['#0d9488', '#38bdf8'], ['#f43f5e', '#a855f7'], ['#d946ef', '#fb923c'], ['#2563eb', '#7c3aed']];
   function applyTheme() {
     const d = document.documentElement;
-    d.style.setProperty('--acc', ACCENTS[S.accent] || ACCENTS[0]);
+    const ac = ACCENTS[S.accent] || ACCENTS[0];
+    d.style.setProperty('--acc', ac[0]);
+    d.style.setProperty('--acc2', ac[1]);
+    d.style.setProperty('--grad', 'linear-gradient(135deg,' + ac[0] + ',' + ac[1] + ')');
     if (S.theme === 'auto') d.removeAttribute('data-theme'); else d.setAttribute('data-theme', S.theme);
     const dark = S.theme === 'dark' || (S.theme === 'auto' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
     const m = document.querySelector('meta[name="theme-color"]');
@@ -1171,7 +1174,7 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
     tools: '<path d="M12 3l4 7H8z"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><circle cx="17.2" cy="17.2" r="3.3"/>',
     cur: '<circle cx="9" cy="9" r="5.5"/><circle cx="15" cy="15" r="5.5"/>',
     hist: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
-    sett: '<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>'
+    sett: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>'
   };
   const NAV5 = ['calc', 'tools', 'cur', 'hist', 'sett'];
   function renderNav() {
@@ -1236,7 +1239,7 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
     const body = `
       <label class="f"><span>${t('lang')}</span><select id="stLang">${Object.keys(LANGS).map(k => `<option value="${k}" ${k === S.lang ? 'selected' : ''}>${LANGS[k]}</option>`).join('')}</select></label>
       <label class="f"><span>${t('theme')}</span><select id="stTheme">${['auto', 'light', 'dark'].map(k => `<option value="${k}" ${k === S.theme ? 'selected' : ''}>${t(k)}</option>`).join('')}</select></label>
-      <div class="f"><span>${t('accent')}</span><div class="swatches" id="stAcc">${ACCENTS.map((c, i) => `<button type="button" data-i="${i}" class="${i === S.accent ? 'on' : ''}" style="background:${c}" aria-label="${c}"></button>`).join('')}</div></div>
+      <div class="f"><span>${t('accent')}</span><div class="swatches" id="stAcc">${ACCENTS.map((c, i) => `<button type="button" data-i="${i}" class="${i === S.accent ? 'on' : ''}" style="background:linear-gradient(135deg,${c[0]},${c[1]})" aria-label="${c[0]}"></button>`).join('')}</div></div>
       <label class="chk"><input id="stVib" type="checkbox" ${S.vib ? 'checked' : ''}><span>${t('vib')}</span></label>
       <p class="note"><a href="privacy.html" target="_blank" rel="noopener">${t('privacy')}</a></p>`;
     openModal(t('sett'), body, () => {
