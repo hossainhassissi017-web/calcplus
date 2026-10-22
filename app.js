@@ -1267,6 +1267,27 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
     });
   }
 
+  /* ---- Android app only: AdMob banner (does nothing on the website) ----
+     IDs below are Google's public TEST ids. Replace with your own AdMob banner id
+     (and set testing: false) before publishing. */
+  const ADMOB = { banner: 'ca-app-pub-3940256099942544/6300978111', testing: true };
+  async function initAds() {
+    const C = window.Capacitor;
+    if (!C || !C.isNativePlatform || !C.isNativePlatform()) return;
+    const A = C.Plugins && C.Plugins.AdMob;
+    if (!A) return;
+    try {
+      try {
+        const ci = await A.requestConsentInfo();
+        if (ci && ci.isConsentFormAvailable && ci.status === 'REQUIRED') await A.showConsentForm();
+      } catch (e) { /* consent not required or unavailable */ }
+      await A.initialize({ initializeForTesting: ADMOB.testing });
+      A.addListener('bannerAdSizeChanged', (sz) => { document.documentElement.style.setProperty('--adh', Math.round(sz.height) + 'px'); });
+      document.body.classList.add('ads');
+      await A.showBanner({ adId: ADMOB.banner, adSize: 'ADAPTIVE_BANNER', position: 'BOTTOM_CENTER', margin: $('#nav').offsetHeight, isTesting: ADMOB.testing });
+    } catch (e) { document.body.classList.remove('ads'); }
+  }
+
   function init() {
     $('#nav').onclick = (e) => { const b = e.target.closest('[data-s]'); if (!b) return; if (b.dataset.s === 'hist') return openHistory(); if (b.dataset.s === 'sett') return openSettings(); S.screen = b.dataset.s; store.set('screen', S.screen); render(); };
     $('#backBtn').onclick = () => go('tools');
@@ -1280,7 +1301,8 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
       try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme); } catch (e) { /* ignore */ }
     }
     render();
-    if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+    initAds();
+    if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol) && !window.Capacitor) {
       navigator.serviceWorker.register('sw.js').catch(() => { /* ignore */ });
     }
   }
