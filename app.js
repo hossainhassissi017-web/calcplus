@@ -1268,9 +1268,10 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
   }
 
   /* ---- Android app only: AdMob banner (does nothing on the website) ----
-     IDs below are Google's public TEST ids. Replace with your own AdMob banner id
-     (and set testing: false) before publishing. */
-  const ADMOB = { banner: 'ca-app-pub-3940256099942544/6300978111', testing: true };
+     Banner id = your real AdMob ad unit. testing:true shows safe TEST ads (use this while
+     you try the app yourself, so you never click real ads). Set testing:false for the
+     version you publish. */
+  const ADMOB = { banner: 'ca-app-pub-7619503599507403/5094124472', testing: true };
   async function initAds() {
     const C = window.Capacitor;
     if (!C || !C.isNativePlatform || !C.isNativePlatform()) return;

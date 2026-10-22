@@ -1,5 +1,5 @@
 /* CalcPlus service worker: offline cache. Bump V when you change any file. */
-const V = 'calcplus-v12';
+const V = 'calcplus-v13';
 const FILES = ['./', 'index.html', 'app.js', 'manifest.json', 'icon-192.png', 'icon-512.png', 'privacy.html'];
 
 self.addEventListener('install', (e) => {
