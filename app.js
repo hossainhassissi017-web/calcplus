@@ -1284,7 +1284,7 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
       } catch (e) { /* consent not required or unavailable */ }
       await A.initialize({ initializeForTesting: ADMOB.testing });
       A.addListener('bannerAdSizeChanged', (sz) => { document.documentElement.style.setProperty('--adh', Math.round(sz.height) + 'px'); });
-      document.body.classList.add('ads');
+      document.documentElement.style.setProperty('--navh', $('#nav').offsetHeight + 'px'); document.body.classList.add('ads');
       await A.showBanner({ adId: ADMOB.banner, adSize: 'ADAPTIVE_BANNER', position: 'BOTTOM_CENTER', margin: $('#nav').offsetHeight, isTesting: ADMOB.testing });
     } catch (e) { document.body.classList.remove('ads'); }
   }
