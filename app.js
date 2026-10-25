@@ -1151,11 +1151,31 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
   const TOOLS = ['tva', 'disc', 'split', 'pct', 'marg', 'cmp', 'trip', 'comp', 'loan', 'unit', 'date', 'hij', 'hrs', 'bmi', 'gold', 'zakat', 'prog'];
   const ICON = { calc: '🧮', cur: '💱', tools: '🧰', tva: '🧾', disc: '🏷️', split: '🍽️', pct: '📊', marg: '💹', cmp: '🛒', trip: '⛽', comp: '📈', loan: '🏦', unit: '📏', date: '📅', hij: '🌙', hrs: '⏱️', bmi: '⚖️', gold: '🪙', zakat: '🤲', prog: '💻' };
 
+  const LINE = {
+    tva: '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
+    disc: '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.2"/>',
+    split: '<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.5a3 3 0 0 1 0 5.5M18 14.5c2 .8 3 2.7 3 5.5"/>',
+    pct: '<path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.2"/><circle cx="17" cy="17" r="2.2"/>',
+    marg: '<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+    cmp: '<circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/><path d="M2 3h3l2.5 12h11L21 7H6"/>',
+    trip: '<path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M3 21h12M6 8h6M14 9h2.5a1.5 1.5 0 0 1 1.5 1.5V16a1.5 1.5 0 0 0 3 0V9l-3-3"/>',
+    comp: '<path d="M3 20h18"/><path d="M5 20v-9M10 20V7M15 20v-7M20 20V4"/>',
+    loan: '<path d="M3 10l9-6 9 6"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/>',
+    unit: '<rect x="2" y="8" width="20" height="8" rx="1.5"/><path d="M6 8v4M10 8v3M14 8v4M18 8v3"/>',
+    date: '<rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    hij: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+    hrs: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/>',
+    bmi: '<path d="M12 3v18M5 21h14M5 7h14"/><path d="M5 7l-3 7a3.5 3.5 0 0 0 6 0zM19 7l-3 7a3.5 3.5 0 0 0 6 0z"/>',
+    gold: '<circle cx="12" cy="12" r="8"/><path d="M12 7v10M9.5 9.5h4a1.5 1.5 0 0 1 0 3h-3a1.5 1.5 0 0 0 0 3H15"/>',
+    zakat: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+    prog: '<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>'
+  };
+  const lineIcon = (id) => LINE[id] ? `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LINE[id]}</svg>` : ICON[id];
   function go(id) { S.screen = id; store.set('screen', id); render(); }
 
   SCR.tools = {
     html: () => `<label class="f srch"><input id="toolQ" type="search" autocomplete="off" placeholder="${t('search')}…"></label>
-      <div class="rows" id="toolRows">${TOOLS.map(id => `<button class="row" data-s="${id}" data-n="${t(id).toLowerCase()}"><i class="ico">${ICON[id]}</i><span>${t(id)}</span><em>›</em></button>`).join('')}</div>
+      <div class="rows" id="toolRows">${TOOLS.map(id => `<button class="row" data-s="${id}" data-n="${t(id).toLowerCase()}"><i class="ico">${lineIcon(id)}</i><span>${t(id)}</span><em>›</em></button>`).join('')}</div>
       <p class="empty" id="toolNone" hidden>—</p>`,
     bind() {
       $('#main').onclick = (e) => { const b = e.target.closest('[data-s]'); if (b) go(b.dataset.s); };
