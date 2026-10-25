@@ -304,7 +304,7 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
     const k = (l, v, c = '') => `<button class="k ${c}" data-k="${v}">${l}</button>`;
     const k0 = (l, v, c = '') => `<button class="k ${c}" data-k="${v}">${l}</button>`;
     return `
-      <div class="disp"><button id="shBtn" class="shr" aria-label="${t('share')}">⤴</button><div id="expr" class="expr"></div><div id="res" class="res" title="${t('copy')}">0</div></div>
+      <div class="disp"><div id="expr" class="expr"></div><div id="res" class="res" title="${t('copy')}">0</div></div>
       <div class="tools">
         <button data-k="MC">MC</button><button data-k="MR">MR</button><button data-k="M+">M+</button><button data-k="M-">M−</button><button data-k="MS">MS</button>
         <button data-k="SCI" class="${S.sci ? 'on' : ''}">f(x)</button><button data-k="DEG" class="${S.deg ? '' : 'on'}">${S.deg ? 'DEG' : 'RAD'}</button>
@@ -1305,7 +1305,7 @@ if (typeof module !== 'undefined') module.exports = { evaluate, fmtNum, tokenize
       await A.initialize({ initializeForTesting: ADMOB.testing });
       A.addListener('bannerAdSizeChanged', (sz) => { document.documentElement.style.setProperty('--adh', Math.round(sz.height) + 'px'); });
       document.documentElement.style.setProperty('--navh', $('#nav').offsetHeight + 'px'); document.body.classList.add('ads');
-      await A.showBanner({ adId: ADMOB.banner, adSize: 'ADAPTIVE_BANNER', position: 'BOTTOM_CENTER', margin: $('#nav').offsetHeight, isTesting: ADMOB.testing });
+      await A.showBanner({ adId: ADMOB.banner, adSize: 'ADAPTIVE_BANNER', position: 'TOP_CENTER', margin: 0, isTesting: ADMOB.testing });
     } catch (e) { document.body.classList.remove('ads'); }
   }
 
